@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8"/>
         <title>Профиль</title>
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="../static/profileStyle.css" />
+        <link rel="stylesheet" href="../static/style.css" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -11,18 +12,18 @@
 
     <body>
         <div class="container">
-            <div class="navbar">
+            <div th:replace="~{fragments/navbar :: navbar}">
 
             </div>
 
-            <div class="sidebar">
+            <div th:replace="~{fragments/sidebar :: sidebar}">
 
             </div>
 
             <div class="mainContentContainer">
                     <div class="profileCard">
                         <div class="profileImage">
-                            <img src="120135.jpg">
+                            <img src="../static/120135.jpg">
                         </div>
 
                         <div class="about">
@@ -33,19 +34,36 @@
 
                     <div class="mainInfo">
                         <h3>Основная информация</h3>
-                        <p>Имя: Юлия</p>
-                        <p>Фамилия: Коренко</p>
-                        <p>Дата рождения: 14.08.2003</p>
-                        <p>Пол: женский</p>
+                        <div class="staticData">
+                            <p>Имя</p>
+                            <p>Фамилия</p>
+                            <p>Год рождения</p>
+                            <p>Пол</p>
+                        </div>
+                        
+                        <div class="dynamicData">
+                            <p>Юлия</p>
+                            <p>Коренко</p>
+                            <p>14.08.2003</p>
+                            <p>Женский</p>
+                        </div>
                     </div>
 
                     <div class="workplaceInfo">
                         <h3>Рабочее место</h3>
-                        <p>Город: Новосибирск</p>
-                        <p>Улица: Космическая 21/1</p>
-                        <p>Отдел: Параша</p>
-                        <p>Этаж: Подвал</p>
-                        <p>Кабинет: 1</p>
+                        <div class="staticData">
+                            <p>Город</p>
+                            <p>Улица</p>
+                            <p>Этаж</p>
+                            <p>Кабинет</p>
+                        </div>
+                        
+                        <div class="dynamicData">
+                            <p>Новосибирск</p>
+                            <p>Космическая 21/1</p>
+                            <p>6</p>
+                            <p>613</p>
+                        </div>
 
                     </div>
 
