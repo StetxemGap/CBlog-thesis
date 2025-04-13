@@ -9,7 +9,7 @@ import java.time.LocalTime;
 @Controller
 public class MyRestController {
 
-    @GetMapping("/auth")
+    @GetMapping("/login")
     public String auth(Model model) {
         String helloString = "Здравствуйте!";
 
@@ -30,7 +30,7 @@ public class MyRestController {
         }
 
         model.addAttribute("today", helloString);
-        return "auth";
+        return "login";
     }
 
     @GetMapping("/profile")
