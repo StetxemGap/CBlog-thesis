@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.time.LocalTime;
 
 @Controller
-public class MyRestController {
+public class MyController {
 
     @GetMapping("/login")
     public String auth(Model model) {
