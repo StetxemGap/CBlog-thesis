@@ -23,7 +23,7 @@ public class SecurityConfing {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/static/**").permitAll()
+                        .requestMatchers("/login", "/resources/static/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

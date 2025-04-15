@@ -2,7 +2,9 @@ package com.korenko.CBlog.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalTime;
 
@@ -36,5 +38,10 @@ public class MyController {
     @GetMapping("/profile")
     public String profile() {
         return "profile";
+    }
+
+    @GetMapping("/activation")
+    public String activation() {
+        return "activation";
     }
 }
