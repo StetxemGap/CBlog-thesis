@@ -23,19 +23,21 @@ public class SecurityConfing {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/resources/static/**").permitAll()
+                        .requestMatchers("/login", "/**.css", "/**.jpg").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/profile")
+                        .defaultSuccessUrl("/profile", true)
                         .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
-                        .permitAll()
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                 );
 
         return http.build();

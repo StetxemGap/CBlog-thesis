@@ -93,6 +93,7 @@ input:focus {
     border-radius: 10px;
     grid-row: 2;
     width: 800px;
+    padding-bottom: 2%;
 
     display: grid;
     grid-template-columns: auto auto;

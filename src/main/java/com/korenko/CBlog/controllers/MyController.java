@@ -1,15 +1,29 @@
 package com.korenko.CBlog.controllers;
 
+import com.korenko.CBlog.DTO.UsersDto;
+import com.korenko.CBlog.model.Users;
+import com.korenko.CBlog.repo.UserRepo;
+import com.korenko.CBlog.service.MyUserDetailService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.time.LocalTime;
 
 @Controller
 public class MyController {
+
+    @Autowired
+    private UserRepo userRepo;
 
     @GetMapping("/login")
     public String auth(Model model) {
@@ -35,8 +49,17 @@ public class MyController {
         return "login";
     }
 
+    @Autowired
+    private MyUserDetailService userDetailService;
+
     @GetMapping("/profile")
-    public String profile() {
+    public String profile(Model model, Principal principal) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = userRepo.findByUsername(username);
+        model.addAttribute("username", user.getUsername());
+
+        UsersDto profile = userDetailService.getUserProfile(principal.getName());
+        model.addAttribute("profile", profile);
         return "profile";
     }
 

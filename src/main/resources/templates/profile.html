@@ -28,8 +28,8 @@
                         </div>
 
                         <div class="about">
-                            <h3>Коренко Юлия</h3>
-                            <p>Дворник</p>
+                            <h3 th:text="${profile.lastName} + ' ' + ${profile.firstName}"></h3>
+                            <p th:text="${profile.position}">
                         </div>
                     </div>
 
@@ -43,10 +43,17 @@
                         </div>
                         
                         <div class="dynamicData">
-                            <p>Юлия</p>
-                            <p>Коренко</p>
-                            <p>14.08.2003</p>
-                            <p>Женский</p>
+                            <p th:text="${profile.firstName}">
+
+                            <p th:text="${profile.lastName}">
+
+                            <p th:if="${profile.doB != null}"
+                               th:text="${#temporals.format(profile.doB.toLocalDate(), 'dd.MM.yyyy')}">
+                            <p th:unless="${profile.doB != null}">------</p>
+
+                            <p th:if="${profile.gender != null}"
+                                th:text="${profile.gender}">
+                            <p th:unless="${profile.gender != null}">------</p>
                         </div>
                     </div>
 
@@ -60,10 +67,19 @@
                         </div>
                         
                         <div class="dynamicData">
-                            <p>Новосибирск</p>
-                            <p>Космическая 21/1</p>
-                            <p>6</p>
-                            <p>613</p>
+                            <p th:text="${profile.city}">
+
+                            <p th:if="${profile.street != null}"
+                               th:text="${profile.street}">
+                            <p th:unless="${profile.street != null}">------</p>
+
+                            <p th:if="${profile.officeFloor != null}"
+                               th:text="${profile.officeFloor}">
+                            <p th:unless="${profile.street != null}">------</p>
+
+                            <p th:if="${profile.officeNumber != null}"
+                               th:text="${profile.officeNumber}">
+                            <p th:unless="${profile.street != null}">------</p>
                         </div>
 
                     </div>

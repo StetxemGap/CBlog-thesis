@@ -1,17 +1,18 @@
 package com.korenko.CBlog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
-import java.util.Objects;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name="users")
 public class Users {
     @Id
     private int id;
     private String username;
     private String password;
     private Boolean activation;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UsersInfo usersInfo;
 
     public int getId() {
         return id;
@@ -43,6 +44,14 @@ public class Users {
 
     public void setActivation(Boolean activation) {
         this.activation = activation;
+    }
+
+    public UsersInfo getUsersInfo() {
+        return usersInfo;
+    }
+
+    public void setUsersInfo(UsersInfo usersInfo) {
+        this.usersInfo = usersInfo;
     }
 
     @Override
