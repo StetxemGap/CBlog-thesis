@@ -100,7 +100,7 @@ input:focus {
     grid-template-rows: 90px auto;
 }
 
-button {
+.confirm button{
     grid-row: 3;
     height: 50px;
     width: 150px;
@@ -114,7 +114,7 @@ button {
     position: relative;
 }
 
-button::after {
+.confirm button::after {
     content: 'Вход';
     position: absolute;
     top: 15px;
@@ -124,7 +124,7 @@ button::after {
     color: black;
 }
 
-button::before {
+.confirm button::before {
     content: '';
     position: absolute;
     top: 0;
@@ -135,10 +135,10 @@ button::before {
     background: blueviolet;
 }
 
-button:hover::before {
+.confirm button:hover::before {
     opacity: 0.6;
 }
 
-button:active::before {
+.confirm button:active::before {
     opacity: 0.9;
 }
