@@ -19,8 +19,9 @@
 
         </div>
 
-        <div class="mainContentContainer">
+        <form class="mainContentContainer" th:action="@{/activation}" method="post">
             <div class="mainInfo">
+                <input type="hidden" name="userId" th:value="${userId}">
                 <h3>Основная информация</h3>
 
                 <div class="staticData">
@@ -31,13 +32,13 @@
                     <p>Пол</p>
                 </div>
 
-                <form class="dynamicData">
-                    <input type="text">
-                    <input type="text">
-                    <input type="text">
-                    <input type="text">
-                    <input type="text">
-                </form>
+                <div class="dynamicData">
+                    <input type="text" name="firstName" required>
+                    <input type="text" name="lastName" required>
+                    <input type="text" name="position" required>
+                    <input type="text" name="dob">
+                    <input type="text" name="gender">
+                </div>
             </div>
 
             <div class="placeInfo">
@@ -50,15 +51,17 @@
                     <p>Кабинет</p>
                 </div>
 
-                <form class="dynamicData" method="post">
-                    <input type="text">
-                    <input type="text">
-                    <input type="text">
-                    <input type="text">
-                </form>
+                <div class="dynamicData">
+                    <input type="text" name="city" required>
+                    <input type="text" name="street">
+                    <input type="text" name="officeFloor">
+                    <input type="text" name="officeNumber">
+                </div>
             </div>
-            <button type="submit"></button>
-        </div>
+            <div>
+                <button type="submit"></button>
+            </div>
+        </form>
     </div>
 </body>
 </html>

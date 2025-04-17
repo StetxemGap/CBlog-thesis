@@ -2,9 +2,11 @@ package com.korenko.CBlog.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name="users")
-public class Users {
+public class Users implements Serializable {
     @Id
     private int id;
     private String username;
@@ -38,7 +40,7 @@ public class Users {
         this.password = password;
     }
 
-    public Boolean getActivation() {
+    public Boolean isActivation() {
         return activation;
     }
 

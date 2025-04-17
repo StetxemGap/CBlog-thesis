@@ -1,12 +1,16 @@
 package com.korenko.CBlog.controllers;
 
 import com.korenko.CBlog.DTO.UsersDto;
+import com.korenko.CBlog.model.UserPrincipal;
 import com.korenko.CBlog.model.Users;
+import com.korenko.CBlog.model.UsersInfo;
 import com.korenko.CBlog.repo.UserRepo;
+import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MyUserDetailService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,8 +67,28 @@ public class MyController {
         return "profile";
     }
 
+    @Autowired
+    private ActivationService activationService;
+
     @GetMapping("/activation")
-    public String activation() {
+    public String activationPage(Model model, Authentication authentication) {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        String username = userPrincipal.getUsername();
+
+        Users user = userRepo.findByUsername(username);
+
+        model.addAttribute("userId", user.getId());
+        model.addAttribute("usersInfo", new UsersInfo());
         return "activation";
+    }
+
+    @PostMapping("/activation")
+    public String processActivation(
+            @RequestParam Integer userId,
+            @ModelAttribute UsersInfo usersInfo) {
+
+        activationService.activateUser(userId, usersInfo);
+        return "redirect:/profile";
     }
 }

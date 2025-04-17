@@ -15,6 +15,7 @@ public class UsersDto {
     private String gender;
     private String city;
     private String street;
+
     private String officeFloor;
     private String officeNumber;
 
@@ -31,6 +32,9 @@ public class UsersDto {
         this.street = userInfo.getStreet();
         this.officeFloor = userInfo.getOfficeFloor();
         this.officeNumber = userInfo.getOfficeNumber();
+    }
+
+    public UsersDto() {
     }
 
     public String getUsername() {

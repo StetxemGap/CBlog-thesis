@@ -38,7 +38,7 @@
                         <div class="staticData">
                             <p>Имя</p>
                             <p>Фамилия</p>
-                            <p>Год рождения</p>
+                            <p>Дата рождения</p>
                             <p>Пол</p>
                         </div>
                         
@@ -51,9 +51,7 @@
                                th:text="${#temporals.format(profile.doB.toLocalDate(), 'dd.MM.yyyy')}">
                             <p th:unless="${profile.doB != null}">------</p>
 
-                            <p th:if="${profile.gender != null}"
-                                th:text="${profile.gender}">
-                            <p th:unless="${profile.gender != null}">------</p>
+                            <p th:text="${!profile.gender.isEmpty()} ? ${profile.gender} : '------'"></p>
                         </div>
                     </div>
 
@@ -67,19 +65,13 @@
                         </div>
                         
                         <div class="dynamicData">
-                            <p th:text="${profile.city}">
+                            <p th:text="${profile.city}"></p>
 
-                            <p th:if="${profile.street != null}"
-                               th:text="${profile.street}">
-                            <p th:unless="${profile.street != null}">------</p>
+                            <p th:text="${!profile.street.isEmpty()} ? ${profile.street} : '------'"></p>
 
-                            <p th:if="${profile.officeFloor != null}"
-                               th:text="${profile.officeFloor}">
-                            <p th:unless="${profile.street != null}">------</p>
+                            <p th:text="${!profile.officeFloor.isEmpty()} ? ${profile.officeFloor} : '------'"></p>
 
-                            <p th:if="${profile.officeNumber != null}"
-                               th:text="${profile.officeNumber}">
-                            <p th:unless="${profile.street != null}">------</p>
+                            <p th:text="${!profile.officeNumber.isEmpty()} ? ${profile.officeNumber} : '------'"></p>
                         </div>
 
                     </div>

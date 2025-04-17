@@ -2,13 +2,15 @@ package com.korenko.CBlog.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
 @Table(name="users_info")
-public class UsersInfo {
+public class UsersInfo implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String firstname;
     private String lastname;
@@ -19,6 +21,14 @@ public class UsersInfo {
     private String street;
     private String officeFloor;
     private String officeNumber;
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
