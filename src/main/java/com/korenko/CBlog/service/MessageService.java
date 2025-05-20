@@ -17,7 +17,7 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    public void saveToDatabase(String sender, String recipient, String text) {
+    public MessageEntity saveToDatabase(String sender, String recipient, String text) {
 
         MessageEntity messageEntity = new MessageEntity();
 
@@ -27,6 +27,7 @@ public class MessageService {
         messageEntity.setTimestamp(LocalDateTime.now());
 
         messageRepository.save(messageEntity);
+        return messageEntity;
     }
 
     public List<MessageEntity> getMessagesBetweenUsers(String user1, String user2) {

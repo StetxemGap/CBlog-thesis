@@ -23,22 +23,26 @@ public class ChatController {
     private SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/handleMessage")
-//    @SendTo("/topic/updates")
     public void handleMessage(@Payload MessageDTO message, Principal principal) {
         String sender = principal.getName();
         String recipientUS = message.getRecipient();
-        messageService.saveToDatabase(sender, recipientUS, message.getContent());
+
+        MessageEntity savedMessage = messageService.saveToDatabase(
+                sender,
+                recipientUS,
+                message.getContent()
+        );
 
         messagingTemplate.convertAndSendToUser(
                 sender,
                 "/queue/messages",
-                message
+                savedMessage
         );
 
         messagingTemplate.convertAndSendToUser(
                 recipientUS,
                 "/queue/messages",
-                message
+                savedMessage
         );
     }
 

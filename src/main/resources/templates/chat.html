@@ -69,9 +69,10 @@
                 displayMessages(msg);
             });
 
-            stompClient.subscribe('/topic/messages', function(message) {
+            const subscription = stompClient.subscribe('/topic/messages', function(message) {
                 const messages = JSON.parse(message.body);
                 displayMessages(messages);
+                subscription.unsubscribe();
             });
 
             const savedChat = loadChatState();
@@ -195,7 +196,7 @@
             timestamp: new Date().toISOString()
         };
 
-        displayMessages(message);
+        // displayMessages(message);
 
         stompClient.send("/app/handleMessage", {},
             JSON.stringify({
