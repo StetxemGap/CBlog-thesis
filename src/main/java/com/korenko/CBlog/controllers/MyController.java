@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.time.LocalTime;
@@ -39,7 +40,7 @@ public class MyController {
         LocalTime morning = LocalTime.of(5, 0);
         LocalTime day = LocalTime.of(12, 0);
         LocalTime evening = LocalTime.of(18, 0);
-        LocalTime night = LocalTime.of(23, 0);
+        LocalTime night = LocalTime.of(0, 0);
 
         if (now.isAfter(morning) && now.isBefore(day)) {
             helloString = "Доброго утра!";
@@ -88,9 +89,10 @@ public class MyController {
     @PostMapping("/activation")
     public String processActivation(
             @RequestParam Integer userId,
-            @ModelAttribute UsersInfo usersInfo) {
+            @ModelAttribute UsersInfo usersInfo,
+            @RequestParam(value = "photo", required = false) MultipartFile photoFile) {
 
-        activationService.activateUser(userId, usersInfo);
+        activationService.activateUser(userId, usersInfo, photoFile);
         return "redirect:/profile";
     }
 
@@ -101,7 +103,8 @@ public class MyController {
                 .map(user -> new UsersDto(
                         user.getUsername(),
                         user.getUsersInfo().getFirstName(),
-                        user.getUsersInfo().getLastName()
+                        user.getUsersInfo().getLastName(),
+                        user.getUsersInfo().getPhotoPath()
                 ))
                 .collect(Collectors.toList());
         List<String> usersOnlineAll = usersOnline.getUsersOnline();

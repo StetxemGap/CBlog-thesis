@@ -24,12 +24,14 @@
             <div class="mainContentContainer">
                     <div class="profileCard">
                         <div class="profileImage">
-                            <img th:src="@{/120135.jpg}" >
+                            <img th:if="${profile.photoPath != null}"
+                            th:src="@{'/uploads/' + ${profile.photoPath}}">
+                            <img th:unless="${profile.photoPath != null}" th:src="@{/120135.jpg}">
                         </div>
 
                         <div class="about">
                             <h3 th:text="${profile.lastName} + ' ' + ${profile.firstName}"></h3>
-                            <p th:text="${profile.position}">
+                            <p  th:text="${profile.position}">
                         </div>
                     </div>
 
@@ -81,6 +83,10 @@
 
                     </div>
             </div>
-        </div>      
+        </div>
+
+    <script>
+        console.log("Last Name: ", '[(${profile.photoPath})]');
+    </script>
     </body>
 </html>

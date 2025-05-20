@@ -29,7 +29,9 @@
                     <div th:each="user : ${usersAll}" th:if="${user.username} != ${currentUser.username} " class="listItem"
                          th:data-user-id="${user.username}"
                          th:data-user-name="${user.firstName + ' ' + user.lastName}">
-                        <p class="userImage"><img th:src="@{/120135.jpg}"></p>
+                        <p class="userImage"><img th:if="${user.photoPath != null}"
+                                                  th:src="@{'/uploads/' + ${user.photoPath}}">
+                            <img th:unless="${user.photoPath != null}" th:src="@{/120135.jpg}"></p>
                         <p class="userName" th:text="${user.firstName + ' ' + user.lastName}"></p>
                         <p class="lastMessage">Последнее сообщение</p>
                     </div>

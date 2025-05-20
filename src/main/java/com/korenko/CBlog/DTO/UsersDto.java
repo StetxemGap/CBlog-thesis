@@ -15,9 +15,9 @@ public class UsersDto {
     private String gender;
     private String city;
     private String street;
-
     private String officeFloor;
     private String officeNumber;
+    private String photoPath;
 
     public UsersDto(Users user) {
         this.username = user.getUsername();
@@ -32,12 +32,14 @@ public class UsersDto {
         this.street = userInfo.getStreet();
         this.officeFloor = userInfo.getOfficeFloor();
         this.officeNumber = userInfo.getOfficeNumber();
+        this.photoPath = userInfo.getPhotoPath();
     }
 
-    public UsersDto(String username, String firstName, String lastName) {
+    public UsersDto(String username, String firstName, String lastName, String photoPath) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.photoPath = photoPath;
     }
 
     public UsersDto() {
@@ -121,5 +123,13 @@ public class UsersDto {
 
     public void setOfficeNumber(String officeNumber) {
         this.officeNumber = officeNumber;
+    }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
     }
 }
