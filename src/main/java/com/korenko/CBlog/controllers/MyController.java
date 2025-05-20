@@ -7,14 +7,12 @@ import com.korenko.CBlog.model.UsersInfo;
 import com.korenko.CBlog.repo.UserRepo;
 import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MyUserDetailService;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+import com.korenko.CBlog.service.UsersOnline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +20,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class MyController {
 
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private UsersOnline usersOnline;
 
     @GetMapping("/login")
     public String auth(Model model) {
@@ -90,5 +92,24 @@ public class MyController {
 
         activationService.activateUser(userId, usersInfo);
         return "redirect:/profile";
+    }
+
+    @GetMapping("/chat")
+    public String usersOverview(Model model, Principal principal) {
+        List<Users> usersAll = userRepo.findByActivationTrue();
+        List<UsersDto> usersNamesAll = usersAll.stream()
+                .map(user -> new UsersDto(
+                        user.getUsername(),
+                        user.getUsersInfo().getFirstName(),
+                        user.getUsersInfo().getLastName()
+                ))
+                .collect(Collectors.toList());
+        List<String> usersOnlineAll = usersOnline.getUsersOnline();
+        model.addAttribute("usersAll", usersNamesAll);
+        model.addAttribute("usersOnline", usersOnlineAll);
+
+        Users user = userRepo.findByUsername(principal.getName());
+        model.addAttribute("currentUser", user);
+        return "chat";
     }
 }

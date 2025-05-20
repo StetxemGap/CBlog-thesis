@@ -2,6 +2,7 @@ package com.korenko.CBlog.config;
 
 import com.korenko.CBlog.model.Users;
 import com.korenko.CBlog.repo.UserRepo;
+import com.korenko.CBlog.service.UsersOnline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -24,6 +23,8 @@ public class SecurityConfing {
     private UserRepo userRepo;
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private UsersOnline usersOnline;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,6 +46,11 @@ public class SecurityConfing {
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
+                        .addLogoutHandler((request, response, authentication) -> {
+                            if (authentication != null) {
+                                usersOnline.removeUser(authentication.getName());
+                            }
+                        })
                 );
 
         return http.build();
@@ -55,11 +61,11 @@ public class SecurityConfing {
         return (request, response, authentication) -> {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Users user = userRepo.findByUsername(userDetails.getUsername());
-
             if (user.isActivation()) {
-                response.sendRedirect("/cblog/profile");
+                response.sendRedirect("/profile");
+                usersOnline.addUser(authentication.getName());
             } else {
-                response.sendRedirect("/cblog/activation");
+                response.sendRedirect("/activation");
             }
         };
     }

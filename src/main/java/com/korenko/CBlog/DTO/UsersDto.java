@@ -34,6 +34,12 @@ public class UsersDto {
         this.officeNumber = userInfo.getOfficeNumber();
     }
 
+    public UsersDto(String username, String firstName, String lastName) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public UsersDto() {
     }
 
@@ -75,5 +81,45 @@ public class UsersDto {
 
     public String getOfficeNumber() {
         return officeNumber;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public void setDoB(Date doB) {
+        DoB = doB;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public void setOfficeFloor(String officeFloor) {
+        this.officeFloor = officeFloor;
+    }
+
+    public void setOfficeNumber(String officeNumber) {
+        this.officeNumber = officeNumber;
     }
 }

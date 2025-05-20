@@ -1,11 +1,12 @@
 package com.korenko.CBlog.controllers;
 
+import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.UsersInfo;
 import com.korenko.CBlog.service.MyUserDetailService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users-info")
@@ -20,4 +21,9 @@ public class UsersRestController {
     public UsersInfo createUser(@RequestBody UsersInfo usersInfo) {
         return myUserDetailService.saveUsersInfo(usersInfo);
     }
+
+//    @GetMapping
+//    public ResponseEntity<List<UsersDto>> getAllUsers() {
+//        return ResponseEntity.ok(myUserDetailService.getAllUsers());
+//    }
 }
