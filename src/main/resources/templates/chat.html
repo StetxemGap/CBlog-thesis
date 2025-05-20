@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="usersList">
-                    <div th:each="user : ${usersAll}" class="listItem"
+                    <div th:each="user : ${usersAll}" th:if="${user.username} != ${currentUser.username} " class="listItem"
                          th:data-user-id="${user.username}"
                          th:data-user-name="${user.firstName + ' ' + user.lastName}">
                         <p class="userImage"><img th:src="@{/120135.jpg}"></p>
