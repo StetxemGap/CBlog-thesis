@@ -3,8 +3,8 @@
     grid-row: 2;
 
     display: grid;
-        grid-template-columns: 10vh minmax(700px, auto) 10vh;
-    grid-template-rows: 5vh minmax(700px, auto) 5vh;
+    grid-template-columns: 10vh minmax(1100px, auto) 10vh;
+    grid-template-rows: 4vh minmax(500px, auto) 4vh;
 }
 
 .mainChatContainer {
@@ -16,14 +16,14 @@
     border-radius: 10px;
 
     display: grid;
-    grid-template-columns: minmax(300px, 35vh) auto;
+    grid-template-columns: minmax(300px, 35vh) minmax(200px, auto);
 }
 
 .usersContainer {
     grid-column: 1;
     border-right: rgba(128, 128, 128, 0.2) solid 1px;
     display: grid;
-    grid-template-rows: 7vh minmax(auto, 75.7vh);
+    grid-template-rows: minmax(70px, 7vh) minmax(auto, 75.7vh);
 }
 
 .searchUsers {
@@ -78,7 +78,7 @@
 .listItem {
     display: grid;
     grid-template-rows: 50% 50%;
-    grid-template-columns: 8vh auto;
+    grid-template-columns: 75px auto;
 
     margin: 0 5px 0 5px;
     border-radius: 5px;
@@ -140,13 +140,13 @@
     grid-column: 2;
 
     display: grid;
-    grid-template-rows: 7vh minmax(60vh, auto) 7vh;
+    grid-template-rows: minmax(70px, 7vh) minmax(60vh, auto) minmax(70px, 7vh);
 }
 
 .chatHeader {
     grid-row: 1;
     display: grid;
-    grid-template-columns: 10vh auto auto;
+    grid-template-columns: 95px auto auto;
 
 }
 .chatHeader .userImage {
@@ -184,6 +184,7 @@
     border-top: rgba(128, 128, 128, 0.2) solid 1px;
     border-bottom: rgba(128, 128, 128, 0.2) solid 1px;
     overflow-y: auto;
+    max-height: 665px;
 
     display: flex;
     flex-direction: column;
