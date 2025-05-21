@@ -26,7 +26,7 @@
                         <div class="profileImage">
                             <img th:if="${profile.photoPath != null}"
                             th:src="@{'/uploads/' + ${profile.photoPath}}">
-                            <img th:unless="${profile.photoPath != null}" th:src="@{/120135.jpg}">
+                            <img th:unless="${profile.photoPath != null}" th:src="@{/user.png}">
                         </div>
 
                         <div class="about">
