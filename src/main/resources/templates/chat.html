@@ -19,16 +19,18 @@
     <div class="mainContainer">
         <div id="currentUser" th:data-username="${currentUser.username}" style="display: none;"></div>
         <div class="mainChatContainer">
-            <form class="usersContainer" th:action="@{/chat}" method="get">
+            <form class="usersContainer" th:action="@{/chat}" method="get" id="searchForm" onsubmit="return false;">
                 <div class="searchUsers">
-                    <input type="text" name="q">
-                    <button type="submit"><img th:src="@{/search.png}" height="25px" width="25px"></button>
+                    <button type="button" id="cancelSearchButton" style="display: none;"><img th:src="@{/close.png}" height="20px" width="20px"></button>
+                    <input id="searchInput" type="text" name="q">
+                    <button type="submit" id="searchButton"><img th:src="@{/search.png}" height="25px" width="25px"></button>
                 </div>
 
-                <div class="usersList">
-                    <div th:each="user : ${usersAll}" th:if="${user.username} != ${currentUser.username} " class="listItem" id="listItem"
+                <div class="usersList" id="usersList">
+                    <div th:each="user : ${usersAll}" th:if="${user.username} != ${currentUser.username} " class="listItem" th:id="'listItem-' + ${user.username}"
                          th:data-user-id="${user.username}"
-                         th:data-user-name="${user.firstName + ' ' + user.lastName}">
+                         th:data-user-name="${user.firstName + ' ' + user.lastName}"
+                         th:data-search-text="${user.firstName + ' ' + user.lastName + ' ' + user.username}">
                         <p class="userImage"><img th:if="${user.photoPath != null}"
                                                   th:src="@{'/uploads/' + ${user.photoPath}}">
                             <img th:unless="${user.photoPath != null}" th:src="@{/user.png}"></p>
@@ -93,11 +95,99 @@
     // но для начала соединимся
     document.addEventListener('DOMContentLoaded', function() {
         connect();
+
+        // Обработчики для поиска
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const cancelSearchButton = document.getElementById('cancelSearchButton');
+        const usersList = document.getElementById('usersList');
+
+        usersList.addEventListener('click', function(e) {
+            const listItem = e.target.closest('.listItem');
+            if (listItem) {
+                const userId = listItem.getAttribute('data-user-id');
+                const userName = listItem.querySelector('.userName').textContent;
+                const userImage = listItem.querySelector('.userImage img').src;
+
+                saveChatState(userId, userName, userImage);
+                openChat(userName, userImage, userId);
+            }
+        });
+
+        // Поиск при клике на кнопку
+        searchButton.addEventListener('click', performSearch);
+
+        // Поиск при нажатии Enter
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+
+        // Отмена поиска
+        cancelSearchButton.addEventListener('click', function() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            this.style.display = 'none';
+
+            const noResults = document.querySelector('.no-results');
+            if (noResults) {
+                noResults.remove();
+            }
+
+            resetUserList();
+        });
+
         const savedState = loadChatState();
         if (savedState) {
             restoreChat(savedState.userName, savedState.userImage, savedState.userId);
         }
     });
+
+    function performSearch() {
+        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        const cancelButton = document.getElementById('cancelSearchButton');
+        const users = document.querySelectorAll('.listItem');
+        let hasResults = false;
+
+        // Удаляем предыдущие сообщения "Не найдено"
+        document.querySelectorAll('.no-results').forEach(el => el.remove());
+
+        if (!searchTerm) {
+            resetUserList();
+            cancelButton.style.display = 'none';
+            return;
+        }
+
+        users.forEach(user => {
+            const userName = user.querySelector('.userName').textContent.toLowerCase();
+            const searchText = user.getAttribute('data-search-text').toLowerCase();
+
+            if (userName.includes(searchTerm) || searchText.includes(searchTerm)) {
+                user.style.display = 'grid';
+                hasResults = true;
+            } else {
+                user.style.display = 'none';
+            }
+        });
+
+        if (!hasResults) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.id = 'tmpText';
+            noResults.textContent = 'Пользователи не найдены';
+            document.getElementById('usersList').appendChild(noResults);
+        }
+
+        cancelButton.style.display = 'flex';
+    }
+
+    function resetUserList() {
+        document.querySelectorAll('.listItem').forEach(user => {
+            user.style.display = 'grid';
+        });
+    }
 
     function restoreChat(userName, userImage, userId) {
         openChat(userName, userImage, userId);
@@ -249,6 +339,15 @@
     `;
         chatBody.appendChild(messageDiv);
         chatBody.scrollTop = chatBody.scrollHeight;
+
+    }
+
+    function updateLastMessage(msg) {
+        const listItem = document.getElementById('listItem');
+        const lastMessageP = document.createElement('p');
+        lastMessageP.className = 'lastMessage';
+        lastMessageP.textContent = '${msg.content}';
+        listItem.appendChild(lastMessageP);
     }
 
     // красивое время для собщений
