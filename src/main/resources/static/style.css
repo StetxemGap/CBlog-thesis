@@ -8,7 +8,7 @@ body {
     display: grid;
     /* grid-template-columns: minmax(50px, 150px) auto; */
     grid-template-columns: 250px minmax(60%, auto);
-    grid-template-rows: 70px auto;
+    grid-template-rows: 60px auto;
     flex: 1;
     font-family: 'Montserrat';
 }
@@ -52,7 +52,7 @@ body {
     border-right: rgba(128, 128, 128, 0.2) solid 1px;
 
     display: grid;
-    grid-template-rows: 70px repeat(3, 70px);
+    grid-template-rows: 60px repeat(3, 70px);
 }
 
 .link {
