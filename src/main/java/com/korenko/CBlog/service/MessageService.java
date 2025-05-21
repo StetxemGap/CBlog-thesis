@@ -71,7 +71,7 @@ public class MessageService {
     }
 
     // метод сохранения сообщения меньше 355 символов
-    public MessageEntity saveToDatabase(String sender, String recipient, String text) {
+    public MessageEntity saveToDatabase(String sender, String recipient, String text, Boolean isFile) {
 
         MessageEntity messageEntity = new MessageEntity();
 
@@ -79,6 +79,7 @@ public class MessageService {
         messageEntity.setRecipient(recipient);
         messageEntity.setContent(text);
         messageEntity.setTimestamp(LocalDateTime.now());
+        messageEntity.setIsFile(isFile);
 
         messageRepository.save(messageEntity);
         return messageEntity;

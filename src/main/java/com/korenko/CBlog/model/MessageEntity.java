@@ -19,7 +19,11 @@ public class MessageEntity {
     private String recipient;
     private String content;
     private LocalDateTime timestamp;
+    @Column(nullable = false)
     private Boolean isPart = false;
+    @Column(nullable = false)
     private Boolean isLastPart = false;
     private Integer partNumber;
+    @Column(nullable = false)
+    private Boolean isFile;
 }

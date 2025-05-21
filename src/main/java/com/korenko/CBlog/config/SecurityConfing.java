@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfing {
@@ -29,9 +30,14 @@ public class SecurityConfing {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/upload")
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/**.css", "/**.jpg").permitAll()
+                        .requestMatchers("/login", "/**.css", "/**.jpg", "/**.png", "/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/activation").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/upload").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

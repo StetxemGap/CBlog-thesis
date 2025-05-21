@@ -254,7 +254,8 @@
     `;
         const chatInput = document.getElementById('chatInput');
         chatInput.innerHTML = `
-                        <button class="docButton" type="sibmit"><img src="/attach.png" height="28px" width="28px"></button>
+                        <button class="docButton" type="sibmit" id="docButton"><img src="/attach.png" height="28px" width="28px"></button>
+                        <input type="file" id="fileInput" style="display: none;">
                         <textarea class="auto-resize-textarea" id="message" rows="1"></textarea>
                         <button class="sendButton" onclick="handleMessage()"><img src="/send.png" height="28px" width="28px"></button>
                 `;
@@ -267,6 +268,18 @@
                 handleMessage();
             }
         });
+        // обработка кнопки для загрузки файлов
+        document.getElementById('docButton').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        // само скрытое поля для их загрузки
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                uploadFile(file);
+            }
+        });
+
         // загрузка сообщений
         loadChatMessages(userId);
     }
@@ -280,15 +293,6 @@
         const savedChat = JSON.parse(localStorage.getItem('currentChat'));
         const recipientUS = savedChat.userId;
 
-        const message = {
-            sender: getCurrentUser(),
-            recipient: recipientUS,
-            content: content,
-            timestamp: new Date().toISOString()
-        };
-
-        // displayMessages(message);
-
         stompClient.send("/app/handleMessage", {},
             JSON.stringify({
                 content: content,
@@ -297,6 +301,41 @@
         );
 
         textarea.value = ' ';
+    }
+
+    function uploadFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const savedChat = loadChatState();
+        if (!savedChat) return;
+
+        formData.append('recipient', savedChat.userId);
+
+        const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-XSRF-TOKEN': csrfToken
+            },
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Upload failed');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Сообщение уже сохранено и отправлено сервером
+                    console.log('File uploaded and message saved', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                alert('Ошибка загрузки файла');
+            });
     }
 
     // функция загрузки сообщений c конкретным пользователем
@@ -332,6 +371,8 @@
 
         const messageDiv = document.createElement('div');
         messageDiv.className = msg.sender === getCurrentUser() ? 'messages user' : 'messages opponent';
+
+        // const content = msg.isFile ? msg.content : `<p class="messagesText">${msg.content}</p>`;
 
         messageDiv.innerHTML = `
               <p class="messagesText">${msg.content}</p>
