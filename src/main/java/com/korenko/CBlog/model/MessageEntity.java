@@ -19,4 +19,7 @@ public class MessageEntity {
     private String recipient;
     private String content;
     private LocalDateTime timestamp;
+    private Boolean isPart = false;
+    private Boolean isLastPart = false;
+    private Integer partNumber;
 }

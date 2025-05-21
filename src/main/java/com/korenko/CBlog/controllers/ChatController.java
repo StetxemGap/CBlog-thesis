@@ -27,23 +27,44 @@ public class ChatController {
         String sender = principal.getName();
         String recipientUS = message.getRecipient();
 
-        MessageEntity savedMessage = messageService.saveToDatabase(
-                sender,
-                recipientUS,
-                message.getContent()
-        );
+        if (message.getContent().length() > 255) {
+            List<MessageEntity> messageParts = messageService.saveLongMessageToDatabase(
+                    sender,
+                    recipientUS,
+                    message.getContent()
+            );
 
-        messagingTemplate.convertAndSendToUser(
-                sender,
-                "/queue/messages",
-                savedMessage
-        );
+            for (MessageEntity part : messageParts) {
+                messagingTemplate.convertAndSendToUser(
+                        recipientUS,
+                        "/queue/messages",
+                        part
+                );
+                messagingTemplate.convertAndSendToUser(
+                        sender,
+                        "/queue/messages",
+                        part
+                );
+            }
+        } else {
 
-        messagingTemplate.convertAndSendToUser(
-                recipientUS,
-                "/queue/messages",
-                savedMessage
-        );
+            MessageEntity savedMessage = messageService.saveToDatabase(
+                    sender,
+                    recipientUS,
+                    message.getContent()
+            );
+            messagingTemplate.convertAndSendToUser(
+                    sender,
+                    "/queue/messages",
+                    savedMessage
+            );
+
+            messagingTemplate.convertAndSendToUser(
+                    recipientUS,
+                    "/queue/messages",
+                    savedMessage
+            );
+        }
     }
 
     @MessageMapping("/requestMessages")

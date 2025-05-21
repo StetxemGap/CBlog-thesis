@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="usersList">
-                    <div th:each="user : ${usersAll}" th:if="${user.username} != ${currentUser.username} " class="listItem"
+                    <div th:each="user : ${usersAll}" th:if="${user.username} != ${currentUser.username} " class="listItem" id="listItem"
                          th:data-user-id="${user.username}"
                          th:data-user-name="${user.firstName + ' ' + user.lastName}">
                         <p class="userImage"><img th:if="${user.photoPath != null}"
@@ -63,7 +63,6 @@
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, function(frame) {
-            console.log('Connected: ' + frame);
             isConnected = true;
 
             stompClient.subscribe('/user/queue/messages', function(message) {
@@ -228,6 +227,7 @@
     function displayMessages(messages) {
         const chatBody = document.getElementById('chatBody');
 
+
         if (Array.isArray(messages)) {
             chatBody.innerHTML = '';
             messages.forEach(msg => displaySingleMessage(msg));
@@ -247,7 +247,6 @@
               <p class="messagesText">${msg.content}</p>
               <p class="messagesTime">${formatTime(msg.timestamp)}</p>
     `;
-
         chatBody.appendChild(messageDiv);
         chatBody.scrollTop = chatBody.scrollHeight;
     }
