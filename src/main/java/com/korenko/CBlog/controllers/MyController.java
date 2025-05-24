@@ -7,7 +7,6 @@ import com.korenko.CBlog.model.UsersInfo;
 import com.korenko.CBlog.repo.UserRepo;
 import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MyUserDetailService;
-import com.korenko.CBlog.service.UsersOnline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,8 +28,6 @@ public class MyController {
 
     @Autowired
     private UserRepo userRepo;
-    @Autowired
-    private UsersOnline usersOnline;
 
     @GetMapping("/login")
     public String auth(Model model) {
@@ -107,9 +104,7 @@ public class MyController {
                         user.getUsersInfo().getPhotoPath()
                 ))
                 .collect(Collectors.toList());
-        List<String> usersOnlineAll = usersOnline.getUsersOnline();
         model.addAttribute("usersAll", usersNamesAll);
-        model.addAttribute("usersOnline", usersOnlineAll);
 
         Users user = userRepo.findByUsername(principal.getName());
         model.addAttribute("currentUser", user);

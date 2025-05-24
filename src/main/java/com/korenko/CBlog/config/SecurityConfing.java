@@ -2,11 +2,11 @@ package com.korenko.CBlog.config;
 
 import com.korenko.CBlog.model.Users;
 import com.korenko.CBlog.repo.UserRepo;
-import com.korenko.CBlog.service.UsersOnline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import java.util.Map;
+
 @Configuration
 public class SecurityConfing {
 
@@ -25,7 +27,7 @@ public class SecurityConfing {
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
-    private UsersOnline usersOnline;
+    private SimpMessagingTemplate messagingTemplate;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,7 +56,11 @@ public class SecurityConfing {
                         .clearAuthentication(true)
                         .addLogoutHandler((request, response, authentication) -> {
                             if (authentication != null) {
-                                usersOnline.removeUser(authentication.getName());
+                                String username = authentication.getName();
+                                messagingTemplate.convertAndSend(
+                                        "/topic/onlineStatus",
+                                        Map.of("username", username, "isOnline", false)
+                                );
                             }
                         })
                 );
@@ -69,7 +75,6 @@ public class SecurityConfing {
             Users user = userRepo.findByUsername(userDetails.getUsername());
             if (user.isActivation()) {
                 response.sendRedirect("/profile");
-                usersOnline.addUser(authentication.getName());
             } else {
                 response.sendRedirect("/activation");
             }
