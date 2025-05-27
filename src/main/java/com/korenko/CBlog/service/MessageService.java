@@ -20,7 +20,7 @@ public class MessageService {
 
     private static final int MAX_MESSAGE_LENGTH = 255;
 
-    // метод сохранения сообщения больше 355 символов
+    // метод сохранения сообщения больше 255 символов
     public List<MessageEntity> saveLongMessageToDatabase(String sender, String recipient, String text) {
         List<String> messagePart = splitMessage(text);
         List<MessageEntity> savedMessage = new ArrayList<>();
@@ -70,7 +70,7 @@ public class MessageService {
         return parts;
     }
 
-    // метод сохранения сообщения меньше 355 символов
+    // метод сохранения сообщения меньше 255 символов
     public MessageEntity saveToDatabase(String sender, String recipient, String text, Boolean isFile) {
 
         MessageEntity messageEntity = new MessageEntity();
@@ -86,7 +86,6 @@ public class MessageService {
     }
 
     public List<MessageEntity> getMessagesBetweenUsers(String user1, String user2) {
-        System.out.println("getMessagesBetweenUsers");
         return messageRepository.findMessagesBetweenUsers(user1, user2);
     }
 }

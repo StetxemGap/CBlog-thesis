@@ -26,9 +26,7 @@
             <div class="mainContentContainer">
                 <div id="currentUser" th:data-username="${profile.username}" style="display: none;"></div>
                     <div class="profileCard">
-                        <div class="profileImage">
-                            <div id="status">
-                            </div>
+                        <div id="profileImage" class="profileImage">
                             <img th:if="${profile.photoPath != null}"
                             th:src="@{'/uploads/' + ${profile.photoPath}}">
                             <img th:unless="${profile.photoPath != null}" th:src="@{/user.png}">
@@ -101,11 +99,9 @@
 
             stompClient.subscribe('/topic/onlineStatus', (message) => {
                 const data = JSON.parse(message.body);
-                console.log("Пользователь " + data.username);
-                console.log("Пользователь " + username);
                 if (data.username === username) {
-                    const element = document.getElementById('status');
-                    element.className = data.isOnline ? 'status online' : 'status offline';
+                    const element = document.getElementById('profileImage');
+                    element.className = data.isOnline ? 'profileImage online' : 'profileImage offline';
                 }
             });
         });

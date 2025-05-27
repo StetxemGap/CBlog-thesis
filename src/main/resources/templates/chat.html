@@ -31,9 +31,11 @@
                          th:data-user-id="${user.username}"
                          th:data-user-name="${user.firstName + ' ' + user.lastName}"
                          th:data-search-text="${user.firstName + ' ' + user.lastName + ' ' + user.username}">
-                        <p class="userImage"><img th:if="${user.photoPath != null}"
+                        <p class="userImage">
+                            <img th:if="${user.photoPath != null}"
                                                   th:src="@{'/uploads/' + ${user.photoPath}}">
-                            <img th:unless="${user.photoPath != null}" th:src="@{/user.png}"></p>
+                            <img th:unless="${user.photoPath != null}" th:src="@{/user.png}">
+                        </p>
                         <p class="userName" th:text="${user.firstName + ' ' + user.lastName}"></p>
                         <p class="lastMessage">Последнее сообщение</p>
                     </div>
@@ -78,10 +80,21 @@
                 subscription.unsubscribe();
             });
 
+            stompClient.subscribe('/user/queue/statuses', function(message) {
+                const statuses = JSON.parse(message.body);
+                Object.entries(statuses).forEach(([username, isOnline]) => {
+                    updateUserStatus(username, isOnline);
+                });
+            });
+
             const savedChat = loadChatState();
             if (savedChat) {
                 loadChatMessages(savedChat.userId);
             }
+            const currentUser = getCurrentUser();
+            stompClient.send("/app/register", {}, currentUser);
+            stompClient.send("/app/requestStatuses", {}, currentUser);
+
         });
     }
 
@@ -91,13 +104,33 @@
         return element ? element.getAttribute('data-username') : null;
     }
 
-    // когда страница загружается / перезагрудается проверяем что в сохраненном состоянии
+    // обновление статуса
+    function updateUserStatus(username, isOnline) {
+        // статус списка пользователей
+        const userElements = document.querySelectorAll(`.listItem[data-user-id="${username}"] .userImage`);
+        userElements.forEach(element => {
+            element.classList.remove('online', 'offline');
+            element.classList.add(isOnline ? 'online' : 'offline');
+        });
+
+        // статус заголовка чата
+        const savedChat = loadChatState();
+        if (savedChat && savedChat.userId === username) {
+            const chatHeaderImage = document.querySelector('#chatHeader .userImage');
+            if (chatHeaderImage) {
+                chatHeaderImage.classList.remove('online', 'offline');
+                chatHeaderImage.classList.add(isOnline ? 'online' : 'offline');
+            }
+        }
+    }
+
+    // когда страница загружается / перезагружается проверяем что в сохраненном состоянии
     // но для начала соединимся
     document.addEventListener('DOMContentLoaded', function() {
         connect();
 
-        // Обработчики для поиска
-        const searchInput = document.getElementById('searchInput');
+        // обработчики для поиска
+        const searchInput = document.getElementById('searchInput')
         const searchButton = document.getElementById('searchButton');
         const cancelSearchButton = document.getElementById('cancelSearchButton');
         const usersList = document.getElementById('usersList');
@@ -114,10 +147,10 @@
             }
         });
 
-        // Поиск при клике на кнопку
+            // Поиск при клике на кнопку
         searchButton.addEventListener('click', performSearch);
 
-        // Поиск при нажатии Enter
+            // Поиск при нажатии Enter
         searchInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -245,6 +278,8 @@
     // открытие чата
     function openChat(userName, userImage, userId) {
         const chatHeader = document.getElementById('chatHeader');
+        // const userElement = document.querySelector(`.listItem[data-user-id="${userId}"] .userImage`);
+        // const statusClass = userElement ? Array.from(userElement.classList).find(cls => cls === 'online' || cls === 'offline') : 'offline';
         chatHeader.innerHTML = `
         <p class="userImage"><img src="${userImage}"></p>
         <p class="opponentName">${userName}</p>
@@ -371,8 +406,6 @@
 
         const messageDiv = document.createElement('div');
         messageDiv.className = msg.sender === getCurrentUser() ? 'messages user' : 'messages opponent';
-
-        // const content = msg.isFile ? msg.content : `<p class="messagesText">${msg.content}</p>`;
 
         messageDiv.innerHTML = `
               <p class="messagesText">${msg.content}</p>

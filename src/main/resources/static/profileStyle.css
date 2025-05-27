@@ -75,26 +75,15 @@
     width: 320px;
     border-radius: 50%;
     margin: 5% 5% 5% 15%;
-    position: relative;
-}
-
-.status {
-    position: absolute;
-    height: 32px;
-    width: 32px;
-    border-radius: 50%;
-    margin-left: 70%;
-    margin-top: 90%;
 }
 
 .online {
-    background: #bc17e1;
+    box-shadow: 5px 5px 30px 2px blueviolet;
 }
 
 .offline {
-    background: #acabab;
+    box-shadow: 5px 5px 30px 2px gray;
 }
-
 
 .profileImage img {
     width: 100%;

@@ -85,13 +85,15 @@ public class ChatController {
     }
 
     @MessageMapping("/requestMessages")
-    @SendTo("/topic/messages")
-    public List<MessageEntity> getMessages(@Payload MessageDTO request, Principal principal) {
+    public void getMessages(@Payload MessageDTO request, Principal principal) {
         String sender = principal.getName();
         String recipient = request.getOtherUser();
-        System.out.println("Recipient name: " + recipient + " sender: " + sender);
 
-        return messageService.getMessagesBetweenUsers(sender, recipient);
+        messagingTemplate.convertAndSendToUser(
+                sender,
+                "/queue/messages",
+                messageService.getMessagesBetweenUsers(sender, recipient)
+        );
     }
 
     @PostMapping("/upload")
@@ -119,7 +121,7 @@ public class ChatController {
                     sender,
                     recipient,
                     messageContent,
-                    true // isFile = true
+                    true
             );
 
             // Отправляем получателю
