@@ -49,7 +49,7 @@
                 <div class="chatBody" id="chatBody">
                     <div class="noDialogMessage">Выберите пользователя, чтобы начать общение</div>
                 </div>
-
+                <div class="notification" id="notification"></div>
                 <div class="chatInput" id="chatInput">
                 </div>
             </div>
@@ -61,6 +61,9 @@
     // делаем websocket соединение
     let stompClient = null;
     let isConnected = false;
+    // таймер для 'печатает...'
+    let typingTimer;
+    const TYPING_DELAY = 1000;
 
     function connect() {
         const socket = new SockJS('/ws');
@@ -85,6 +88,21 @@
                 Object.entries(statuses).forEach(([username, isOnline]) => {
                     updateUserStatus(username, isOnline);
                 });
+            });
+
+            stompClient.subscribe(`/user/queue/typing`, function(message) {
+                const notification = JSON.parse(message.body);
+                const currentChat = loadChatState();
+
+                if (!currentChat || notification.sender !== currentChat.userId) return;
+
+
+                const typingIndicator = document.querySelector('#notification .typing-indicator');
+                console.log('Found indicator:', typingIndicator);
+                if (typingIndicator) {
+                    console.log('Setting display:', notification.isTyping );
+                    typingIndicator.style.display = notification.isTyping ? 'block' : 'none';
+                }
             });
 
             const savedChat = loadChatState();
@@ -281,9 +299,16 @@
 
     // открытие чата
     function openChat(userName, userImage, userId) {
+        const notificationDiv = document.getElementById('notification');
+        notificationDiv.innerHTML = '';
+
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.style.display = 'none';
+        typingIndicator.textContent = 'печатает...';
+        notificationDiv.appendChild(typingIndicator);
+
         const chatHeader = document.getElementById('chatHeader');
-        // const userElement = document.querySelector(`.listItem[data-user-id="${userId}"] .userImage`);
-        // const statusClass = userElement ? Array.from(userElement.classList).find(cls => cls === 'online' || cls === 'offline') : 'offline';
         chatHeader.innerHTML = `
         <p class="userImage"><img src="${userImage}"></p>
         <p class="opponentName">${userName}</p>
@@ -307,6 +332,19 @@
                 handleMessage();
             }
         });
+        // отслеживаем вводится ли текст для 'печатает...'
+        textarea.addEventListener('input', function() {
+            clearTimeout(typingTimer);
+
+            const isTyping = this.value.length >= 0;
+            sendTypingNotification(true, userId);
+
+            if (isTyping) {
+                typingTimer = setTimeout(() => {
+                    sendTypingNotification(false, userId);
+                }, TYPING_DELAY);
+            }
+        });
         // обработка кнопки для загрузки файлов
         document.getElementById('docButton').addEventListener('click', function() {
             document.getElementById('fileInput').click();
@@ -321,6 +359,15 @@
 
         // загрузка сообщений
         loadChatMessages(userId);
+    }
+
+    function sendTypingNotification(isTyping, userId) {
+        stompClient.send("/app/typing", {},
+            JSON.stringify({
+                recipient: userId,
+                isTyping: isTyping
+            })
+        );
     }
 
     // закидываем сообщения серверу
@@ -395,9 +442,9 @@
     function displayMessages(messages) {
         const chatBody = document.getElementById('chatBody');
 
-
         if (Array.isArray(messages)) {
             chatBody.innerHTML = '';
+
             messages.forEach(msg => displaySingleMessage(msg));
         }
         else {

@@ -146,7 +146,11 @@
     grid-column: 2;
 
     display: grid;
-    grid-template-rows: minmax(70px, 7vh) minmax(60vh, auto) minmax(70px, 7vh);
+    grid-template-rows: minmax(60px, 7vh) minmax(60vh, auto) 20px minmax(60px, 7vh);
+}
+
+.notification{
+    grid-row: 3;
 }
 
 .chatHeader {
@@ -188,7 +192,6 @@
 .chatBody {
     grid-row: 2;
     border-top: rgba(128, 128, 128, 0.2) solid 1px;
-    border-bottom: rgba(128, 128, 128, 0.2) solid 1px;
     overflow-y: auto;
     max-height: 665px;
 
@@ -240,10 +243,11 @@
 }
 
 .chatInput {
-    grid-row: 3;
+    grid-row: 4;
 
     display: grid;
     grid-template-columns: 7vh auto 7vh;
+    border-top: rgba(128, 128, 128, 0.2) solid 1px;
 
     min-height: 5vh;
     transition: min-height 0.2s ease;
@@ -286,5 +290,20 @@
 
 .chatInput button:active {
     opacity: 1;
+}
+
+.typing-indicator {
+    color: #666;
+    font-style: italic;
+    margin: 0 0 5px 10px;
+    text-align: left;
+    font-size: 1em;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
 }
 
