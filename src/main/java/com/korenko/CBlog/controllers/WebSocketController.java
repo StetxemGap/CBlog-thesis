@@ -30,7 +30,6 @@ public class WebSocketController {
 
     @MessageMapping("/register")
     public void registerUser(@Payload String username) {
-        System.out.println("Request the user " + username);
         onlineUsers.add(username);
         notifyStatusChange(username, true);
     }

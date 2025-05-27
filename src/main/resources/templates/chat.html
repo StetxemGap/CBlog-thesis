@@ -66,7 +66,7 @@
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, function(frame) {
+        stompClient.connect({},  () => {
             isConnected = true;
 
             stompClient.subscribe('/user/queue/messages', function(message) {
@@ -103,6 +103,10 @@
         const element = document.getElementById('currentUser');
         return element ? element.getAttribute('data-username') : null;
     }
+
+    window.addEventListener('beforeunload', () => {
+        stompClient.send("/app/unregister", {}, getCurrentUser());
+    });
 
     // обновление статуса
     function updateUserStatus(username, isOnline) {

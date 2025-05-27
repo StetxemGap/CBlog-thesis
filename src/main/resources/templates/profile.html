@@ -107,7 +107,7 @@
         });
 
         window.addEventListener('beforeunload', () => {
-            stompClient.send("/app/unregister", {}, JSON.stringify(username));
+            stompClient.send("/app/unregister", {}, username);
         });
     </script>
     </body>
