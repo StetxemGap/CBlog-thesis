@@ -4,6 +4,7 @@ import com.korenko.CBlog.model.ChatMessage;
 import com.korenko.CBlog.model.MessageEntity;
 import com.korenko.CBlog.repo.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,4 +89,16 @@ public class MessageService {
     public List<MessageEntity> getMessagesBetweenUsers(String user1, String user2) {
         return messageRepository.findMessagesBetweenUsers(user1, user2);
     }
+
+    public void deleteMessage(Integer id) {
+        messageRepository.deleteById(id);
+    }
+
+    public MessageEntity getMessageById(Integer id) {
+        return messageRepository.getMessageEntityById(id);
+    }
+
+//    public void updateMessage(Integer id, String text) {
+//        messageRepository.updateById(id, text);
+//    }
 }

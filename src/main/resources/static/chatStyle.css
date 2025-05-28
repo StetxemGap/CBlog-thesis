@@ -213,6 +213,47 @@
     border-radius: 10px;
     display: flex;
     flex-direction: row;
+    transition: 0.3s;
+}
+
+.parentMessages:hover .messages.sender{
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.27);
+}
+
+.parentMessages:hover .messageMenu.sender{
+    /*display: flex;*/
+    visibility: visible;
+    height: auto;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.messageMenu {
+    border-radius: 10px;
+    gap: 5px;
+    padding: 5px;
+    display: flex;
+    height: 0;
+    visibility: hidden;
+    opacity: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: -5px;
+    transform: translateY(80%);
+    transition: 0.6s;
+}
+
+.item {
+    cursor: pointer;
+}
+
+.item:hover {
+    opacity: 0.6;
+}
+
+.messageMenu img {
+    height: 16px;
+    width: 16px;
 }
 
 .messagesText {

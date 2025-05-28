@@ -161,4 +161,25 @@ public class ChatController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @MessageMapping("/operation")
+    public void deleteMessage(@Payload Integer id) {
+        MessageEntity message = messageService.getMessageById(id);
+        String sender = message.getSender();
+        String recipient = message.getRecipient();
+
+        messageService.deleteMessage(id);
+
+        messagingTemplate.convertAndSendToUser(
+                sender,
+                "/queue/messages",
+                messageService.getMessagesBetweenUsers(sender, recipient)
+        );
+
+        messagingTemplate.convertAndSendToUser(
+                recipient,
+                "/queue/messages",
+                messageService.getMessagesBetweenUsers(sender, recipient)
+        );
+    }
 }

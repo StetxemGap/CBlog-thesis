@@ -16,4 +16,8 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Integer>
             "ORDER BY m.timestamp ASC")
     List<MessageEntity> findMessagesBetweenUsers(@Param("user1") String user1,
                                                  @Param("user2") String user2);
+
+    void deleteById(Integer id);
+    MessageEntity getMessageEntityById(Integer id);
+//    void updateById(Integer id, String text);
 }

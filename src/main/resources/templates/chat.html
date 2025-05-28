@@ -507,16 +507,39 @@
 
         const currentUser = getCurrentUser();
 
+        const parentDiv = document.createElement('div')
         const messageDiv = document.createElement('div');
-        messageDiv.className = msg.sender === currentUser ? 'messages sender' : 'messages recipient';
+        const messageMenu = document.createElement('div');
 
+        parentDiv.className = `parentMessages ${msg.id}`;
+        messageDiv.className = msg.sender === currentUser ? 'messages sender' : 'messages recipient';
+        if (currentUser === msg.sender) {
+            messageMenu.className = 'messageMenu sender';
+
+            messageMenu.innerHTML = `
+              <div class="item change ${msg.id}" id="change"><img src="/change.png"></div>
+              <div class="item reply" id="reply"><img src="/reply.png"></div>
+              <div class="item delete" id="delete"><img src="/delete.png"></div>
+        `;
+            parentDiv.appendChild(messageMenu);
+        }
         messageDiv.innerHTML = `
              <p class="messagesText">${msg.content}</p>
              <p class="messagesTime">${formatTime(msg.timestamp)}</p>
         `;
-        chatBody.appendChild(messageDiv);
+
+        parentDiv.appendChild(messageDiv);
+        chatBody.appendChild(parentDiv);
         chatBody.scrollTop = chatBody.scrollHeight;
 
+
+        // обрабатываем действия с сообщениями
+        parentDiv.addEventListener('click', function(e) {
+            if (e.target.closest('.delete')) {
+                console.log("Message id:", msg.id);
+                stompClient.send("/app/operation", {}, msg.id);
+            }
+        });
     }
 
     // функция сортировки пользователей по последнему взаимодействию
