@@ -221,12 +221,12 @@
     white-space: normal;
 }
 
-.opponent {
+.recipient {
     background-color: rgba(138, 43, 226, 0.46);
     place-self: start;
 }
 
-.user {
+.sender {
     background-color: #dcdcdc;
     place-self: end;
 }

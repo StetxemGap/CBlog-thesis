@@ -53,12 +53,12 @@ public class ChatController {
             for (MessageEntity part : messageParts) {
                 messagingTemplate.convertAndSendToUser(
                         recipientUS,
-                        "/queue/messages",
+                        "/queue/newMessages",
                         part
                 );
                 messagingTemplate.convertAndSendToUser(
                         sender,
-                        "/queue/messages",
+                        "/queue/newMessages",
                         part
                 );
             }
@@ -72,13 +72,13 @@ public class ChatController {
             );
             messagingTemplate.convertAndSendToUser(
                     sender,
-                    "/queue/messages",
+                    "/queue/newMessages",
                     savedMessage
             );
 
             messagingTemplate.convertAndSendToUser(
                     recipientUS,
-                    "/queue/messages",
+                    "/queue/newMessages",
                     savedMessage
             );
         }
@@ -127,14 +127,14 @@ public class ChatController {
             // Отправляем получателю
             messagingTemplate.convertAndSendToUser(
                     recipient,
-                    "/queue/messages",
+                    "/queue/newMessages",
                     savedMessage
             );
 
             // Отправляем отправителю
             messagingTemplate.convertAndSendToUser(
                     sender,
-                    "/queue/messages",
+                    "/queue/newMessages",
                     savedMessage
             );
 

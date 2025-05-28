@@ -83,28 +83,6 @@
                 resetUserList();
             });
 
-            stompClient.subscribe('/user/queue/newMessages', function(message) {
-                const msg = JSON.parse(message.body);
-                const recipient = msg.recipient;
-                console.log("recipient " + msg.recipient);
-                const sender = msg.sender;
-                const currentUser = getCurrentUser();
-                const opponent = document.getElementById('opponent').classList.toString();
-
-                const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
-                lastMessages[msg.sender] = new Date().getTime();
-                localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
-
-
-                console.log( recipient + ' === ' + currentUser);
-                console.log( 'opponentName ' + sender + ' === ' + opponent);
-                if ((recipient === currentUser && 'opponentName ' + sender === opponent) || sender === currentUser) {
-                    displayMessages(msg);
-                }
-
-                resetUserList();
-            });
-
             // const subscription = stompClient.subscribe('/topic/messages', function(message) {
             //     const messages = JSON.parse(message.body);
             //     displayMessages(messages);
@@ -504,19 +482,21 @@
 
     function displaySingleMessage(msg) {
         const chatBody = document.getElementById('chatBody');
+        const opponent = document.getElementById('opponent').classList.toString();
 
         const currentUser = getCurrentUser();
 
         const messageDiv = document.createElement('div');
         messageDiv.className = msg.sender === currentUser ? 'messages sender' : 'messages recipient';
 
-        messageDiv.innerHTML = `
-             <p class="messagesText">${msg.content}</p>
-             <p class="messagesTime">${formatTime(msg.timestamp)}</p>
-        `;
-        chatBody.appendChild(messageDiv);
-        chatBody.scrollTop = chatBody.scrollHeight;
-
+        if ((msg.recipient === currentUser && msg.sender === opponent) || msg.sender === currentUser) {
+            messageDiv.innerHTML = `
+              <p class="messagesText">${msg.content}</p>
+              <p class="messagesTime">${formatTime(msg.timestamp)}</p>
+    `;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
     }
 
     // функция сортировки пользователей по последнему взаимодействию
