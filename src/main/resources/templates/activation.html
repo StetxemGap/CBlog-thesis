@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Активация</title>
-    <link rel="stylesheet" th:href="@{/activationStyle.css}" />
-    <link rel="stylesheet" th:href="@{/style.css}" />
+    <link rel="stylesheet" th:href="@{/style/activationStyle.css}" />
+    <link rel="stylesheet" th:href="@{/style/style.css}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
@@ -38,8 +38,12 @@
                     <input type="text" name="firstName" required>
                     <input type="text" name="lastName" required>
                     <input type="text" name="position" required>
-                    <input type="text" name="dob">
-                    <input type="text" name="gender">
+                    <input type="date" name="dob">
+                    <select name="gender">
+                        <option value="none">Не указано</option>
+                        <option value="male">Мужской</option>
+                        <option value="female">Женский</option>
+                    </select>
                 </div>
             </div>
 
@@ -76,6 +80,15 @@
         </form>
     </div>
 <script>
+    // отключение ссылок на другие страницы
+    const navigation = document.querySelectorAll('#navigation .link');
+    navigation.forEach(element => {
+        element.style.display = 'none';
+        element.addEventListener('click',function (e) {
+            e.preventDefault();
+        })
+    });
+
     document.getElementById("imageUpload").addEventListener("change", function(event) {
         const file = event.target.files[0];
         if (file) {
@@ -86,6 +99,7 @@
             reader.readAsDataURL(file);
         }
     });
+
 </script>
 </body>
 </html>

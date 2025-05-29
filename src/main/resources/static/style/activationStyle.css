@@ -68,7 +68,28 @@ input {
     transition: opacity 0.5s ease-in-out;
 }
 
+select{
+    border: none;
+    outline: none;
+    appearance: none;
+    border-bottom: blueviolet solid 2px;
+    opacity: 0.5;
+    height: 23px;
+    padding-left: 10px;
+    margin: 0 10% 0 10%;
+
+    font-family: 'Montserrat';
+    font-size: medium;
+
+    transition: opacity 0.5s ease-in-out
+}
+
 input:focus {
+    outline: none;
+    opacity: 1;
+}
+
+select:focus {
     outline: none;
     opacity: 1;
 }
@@ -195,5 +216,5 @@ input:focus {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url('user.png');
+    background-image: url('../img/user.png');
 }

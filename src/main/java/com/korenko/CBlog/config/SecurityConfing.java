@@ -37,7 +37,7 @@ public class SecurityConfing {
                         .ignoringRequestMatchers("/upload")
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/**.css", "/**.jpg", "/**.png", "/uploads/**").permitAll()
+                        .requestMatchers("/login", "style/**.css", "img/**.jpg", "img/**.png", "/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/activation").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/upload").authenticated()
                         .anyRequest().authenticated()
