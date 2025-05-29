@@ -162,7 +162,7 @@ public class ChatController {
         }
     }
 
-    @MessageMapping("/operation")
+    @MessageMapping("/deleteMessage")
     public void deleteMessage(@Payload Integer id) {
         MessageEntity message = messageService.getMessageById(id);
         String sender = message.getSender();
@@ -170,16 +170,23 @@ public class ChatController {
 
         messageService.deleteMessage(id);
 
-        messagingTemplate.convertAndSendToUser(
-                sender,
-                "/queue/messages",
-                messageService.getMessagesBetweenUsers(sender, recipient)
-        );
+//        messagingTemplate.convertAndSendToUser(
+//                sender,
+//                "/queue/messages",
+//                messageService.getMessagesBetweenUsers(sender, recipient)
+//        );
+//
+//        messagingTemplate.convertAndSendToUser(
+//                recipient,
+//                "/queue/messages",
+//                messageService.getMessagesBetweenUsers(sender, recipient)
+//        );
+    }
 
-        messagingTemplate.convertAndSendToUser(
-                recipient,
-                "/queue/messages",
-                messageService.getMessagesBetweenUsers(sender, recipient)
-        );
+    @MessageMapping("/updateMessage")
+    public void updateMessage (@Payload Map<String, Object> message){
+        Integer id = (Integer) message.get("id");
+        String content = (String) message.get("content");
+        messageService.updateMessage(id, content);
     }
 }

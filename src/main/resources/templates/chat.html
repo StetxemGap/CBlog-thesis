@@ -514,6 +514,8 @@
         parentDiv.className = `parentMessages ${msg.id}`;
         messageDiv.className = msg.sender === currentUser ? 'messages sender' : 'messages recipient';
         if (currentUser === msg.sender) {
+            parentDiv.id=`parentMessages${msg.id}`;
+            messageDiv.id=`message${msg.id}`;
             messageMenu.className = 'messageMenu sender';
 
             messageMenu.innerHTML = `
@@ -537,7 +539,44 @@
         parentDiv.addEventListener('click', function(e) {
             if (e.target.closest('.delete')) {
                 console.log("Message id:", msg.id);
-                stompClient.send("/app/operation", {}, msg.id);
+                stompClient.send("/app/deleteMessage", {}, msg.id);
+                const parentDiv = document.getElementById(`parentMessages${msg.id}`);
+                chatBody.removeChild(parentDiv);
+            }
+        });
+
+        parentDiv.addEventListener('click', function(e) {
+            if (e.target.closest('.change')) {
+                console.log("Message id:", msg.id);
+
+                const changeMessage = document.getElementById(`message${msg.id}`);
+                const messageText = changeMessage.querySelector('.messagesText').textContent;
+                changeMessage.innerHTML = `
+                <textarea class="auto-resize-textarea" id="newMessage" rows="1">${messageText}</textarea>
+                `;
+                const newMessage = document.getElementById('newMessage');
+                newMessage.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.altKey && !e.shiftKey && !e.ctrlKey) {
+                        e.preventDefault();
+                        const content = newMessage.value.trim();
+                        if (content !== msg.content) {
+                            stompClient.send("/app/updateMessage", {},
+                                JSON.stringify({
+                                id: msg.id,
+                                content: content
+                            }));
+                            changeMessage.innerHTML = `
+                            <p class="messagesText">${content}</p>
+                             <p class="messagesTime">${formatTime(msg.timestamp)}</p>
+                        `;
+                        } else {
+                            changeMessage.innerHTML = `
+                            <p class="messagesText">${msg.content}</p>
+                             <p class="messagesTime">${formatTime(msg.timestamp)}</p>
+                        `;
+                        }
+                    }
+                });
             }
         });
     }

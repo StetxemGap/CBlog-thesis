@@ -2,6 +2,7 @@ package com.korenko.CBlog.repo;
 
 import com.korenko.CBlog.model.MessageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -19,5 +20,7 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Integer>
 
     void deleteById(Integer id);
     MessageEntity getMessageEntityById(Integer id);
-//    void updateById(Integer id, String text);
+    @Modifying
+    @Query("UPDATE MessageEntity m SET m.content = :content WHERE m.id = :id")
+    int updateMessageContentById(@Param("id") int id, @Param("content") String content);
 }

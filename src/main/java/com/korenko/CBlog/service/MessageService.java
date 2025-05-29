@@ -98,7 +98,7 @@ public class MessageService {
         return messageRepository.getMessageEntityById(id);
     }
 
-//    public void updateMessage(Integer id, String text) {
-//        messageRepository.updateById(id, text);
-//    }
+    public void updateMessage(Integer id, String content){
+        messageRepository.updateMessageContentById(id, content);
+    }
 }
