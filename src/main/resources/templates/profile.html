@@ -53,9 +53,9 @@
 
                             <p th:text="${profile.lastName}">
 
-                            <p th:if="${profile.doB != null}"
-                               th:text="${#temporals.format(profile.doB.toLocalDate(), 'dd.MM.yyyy')}">
-                            <p th:unless="${profile.doB != null}">------</p>
+                            <p th:if="${profile.dob != null}"
+                               th:text="${#temporals.format(profile.dob, 'dd.MM.yyyy')}">
+                            <p th:unless="${profile.dob != null}">------</p>
 
                             <p th:text="${!profile.gender.isEmpty()} ? ${profile.gender} : '------'"></p>
                         </div>

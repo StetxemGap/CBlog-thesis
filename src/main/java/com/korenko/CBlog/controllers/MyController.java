@@ -89,6 +89,20 @@ public class MyController {
             @ModelAttribute UsersInfo usersInfo,
             @RequestParam(value = "photo", required = false) MultipartFile photoFile) {
 
+        if (usersInfo.getGender() != null) {
+            switch (usersInfo.getGender()) {
+                case "male":
+                    usersInfo.setGender("Мужской");
+                    break;
+                case "female":
+                    usersInfo.setGender("Женский");
+                    break;
+                case "none":
+                    usersInfo.setGender(null);
+                    break;
+            }
+        }
+
         activationService.activateUser(userId, usersInfo, photoFile);
         return "redirect:/profile";
     }
@@ -99,8 +113,8 @@ public class MyController {
         List<UsersDto> usersNamesAll = usersAll.stream()
                 .map(user -> new UsersDto(
                         user.getUsername(),
-                        user.getUsersInfo().getFirstName(),
-                        user.getUsersInfo().getLastName(),
+                        user.getUsersInfo().getFirstname(),
+                        user.getUsersInfo().getLastname(),
                         user.getUsersInfo().getPhotoPath()
                 ))
                 .collect(Collectors.toList());

@@ -164,7 +164,14 @@ public class ChatController {
 
     @MessageMapping("/deleteMessage")
     public void deleteMessage(@Payload Integer id) {
+        MessageEntity message = messageService.getMessageById(id);
         messageService.deleteMessage(id);
+
+        messagingTemplate.convertAndSendToUser(
+                message.getRecipient(),
+                "/queue/messages",
+                messageService.getMessagesBetweenUsers(message.getSender(), message.getRecipient())
+        );
     }
 
     @MessageMapping("/updateMessage")

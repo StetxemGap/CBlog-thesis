@@ -2,16 +2,20 @@ package com.korenko.CBlog.DTO;
 
 import com.korenko.CBlog.model.Users;
 import com.korenko.CBlog.model.UsersInfo;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
+@Setter
+@Getter
 public class UsersDto {
 
     private String username;
     private String firstName;
     private String lastName;
     private String position;
-    private Date DoB;
+    private LocalDate dob;
     private String gender;
     private String city;
     private String street;
@@ -23,10 +27,10 @@ public class UsersDto {
         this.username = user.getUsername();
 
         UsersInfo userInfo = user.getUsersInfo();
-        this.firstName = userInfo.getFirstName();
-        this.lastName = userInfo.getLastName();
+        this.firstName = userInfo.getFirstname();
+        this.lastName = userInfo.getLastname();
         this.position = userInfo.getPosition();
-        this.DoB = userInfo.getDoB();
+        this.dob = userInfo.getDob();
         this.gender = userInfo.getGender();
         this.city = userInfo.getCity();
         this.street = userInfo.getStreet();
@@ -43,93 +47,5 @@ public class UsersDto {
     }
 
     public UsersDto() {
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public Date getDoB() {
-        return DoB;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getOfficeFloor() {
-        return officeFloor;
-    }
-
-    public String getOfficeNumber() {
-        return officeNumber;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public void setDoB(Date doB) {
-        DoB = doB;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public void setOfficeFloor(String officeFloor) {
-        this.officeFloor = officeFloor;
-    }
-
-    public void setOfficeNumber(String officeNumber) {
-        this.officeNumber = officeNumber;
-    }
-
-    public String getPhotoPath() {
-        return photoPath;
-    }
-
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
     }
 }

@@ -1,12 +1,17 @@
 package com.korenko.CBlog.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name="users_info")
+@Setter
+@Getter
 public class UsersInfo implements Serializable {
 
     @Id
@@ -15,7 +20,7 @@ public class UsersInfo implements Serializable {
     private String firstname;
     private String lastname;
     private String position;
-    private Date DoB;
+    private LocalDate dob;
     private String gender;
     private String city;
     private String street;
@@ -23,119 +28,8 @@ public class UsersInfo implements Serializable {
     private String officeNumber;
     private String photoPath;
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getPhotoPath() {
-        return photoPath;
-    }
-
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
-    }
-
-    public Users getUser() {
-        return user;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
-    }
-
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Users user;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstname;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstname = firstName;
-    }
-
-    public String getLastName() {
-        return lastname;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastname = lastName;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public Date getDoB() {
-        return DoB;
-    }
-
-    public void setDoB(Date doB) {
-        DoB = doB;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getOfficeFloor() {
-        return officeFloor;
-    }
-
-    public void setOfficeFloor(String officeFloor) {
-        this.officeFloor = officeFloor;
-    }
-
-    public String getOfficeNumber() {
-        return officeNumber;
-    }
-
-    public void setOfficeNumber(String officeNumber) {
-        this.officeNumber = officeNumber;
-    }
 }
