@@ -12,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -61,7 +58,7 @@ public class MyController {
     public String profile(Model model, Principal principal) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Users user = userRepo.findByUsername(username);
-        model.addAttribute("username", user.getUsername());
+        model.addAttribute("currentUser", user);
 
         UsersDto profile = userDetailService.getUserProfile(principal.getName());
         model.addAttribute("profile", profile);
@@ -142,5 +139,16 @@ public class MyController {
         Users user = userRepo.findByUsername(principal.getName());
         model.addAttribute("currentUser", user);
         return "allUsers";
+    }
+
+    @GetMapping("/profile/{username}")
+    public String viewUserProfile(@PathVariable String username, Model model, Principal principal) {
+        Users currentUser = userRepo.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currentUser);
+
+        UsersDto profile = userDetailService.getUserProfile(username);
+        model.addAttribute("profile", profile);
+
+        return "profile";
     }
 }

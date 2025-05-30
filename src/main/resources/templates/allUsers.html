@@ -78,8 +78,12 @@
                         <img th:unless="${user.photoPath != null}" th:src="@{/img/user.png}">
                     </p>
                     <p class="userName" th:text="${user.firstName + ' ' + user.lastName}"></p>
-                    <button class="userAction seeUserProfile"><img src="/img/profile.png"></button>
-                    <button class="userAction sendMessage"><img src="/img/message.png"></button>
+                    <a th:href="@{/profile/{username}(username=${user.username})}" class="userAction seeUserProfile">
+                        <img src="/img/profile.png">
+                    </a>
+                    <button class="userAction sendMessage"
+                            th:attr="data-username=${user.username}"
+                            onclick="startChat(this)"><img src="/img/message.png"></button>
                 </div>
             </div>
         </div>

@@ -62,6 +62,19 @@ public class WebSocketController {
         );
     }
 
+    @MessageMapping("/requestStatus")
+    public void sendStatus(@Payload Map<String, Object> message) {
+        String requestingUser = (String) message.get("requestingUser");
+        String requestedUser = (String) message.get("requestedUser");
+
+        Boolean response = onlineUsers.contains(requestedUser);
+        messagingTemplate.convertAndSendToUser(
+                requestingUser,
+                "/queue/status",
+                response
+        );
+    }
+
     private void notifyStatusChange(String username, boolean isOnline) {
         messagingTemplate.convertAndSend(
                 "/topic/onlineStatus",

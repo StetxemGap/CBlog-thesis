@@ -24,7 +24,8 @@
             </div>
 
             <div class="mainContentContainer">
-                <div id="currentUser" th:data-username="${profile.username}" style="display: none;"></div>
+                <div id="currentUser" th:data-username="${currentUser.username}" style="display: none;"></div>
+                <div id="user" th:data-username="${profile.username}" style="display: none;"></div>
                     <div class="profileCard">
                         <div id="profileImage" class="profileImage">
                             <img th:if="${profile.photoPath != null}"
@@ -93,22 +94,43 @@
         const stompClient = Stomp.over(socket);
         const element = document.getElementById('currentUser');
         const username = element.getAttribute('data-username');
+        const elem = document.getElementById('user');
+        const user = elem.getAttribute('data-username');
+        console.log(username);
+        console.log(user);
 
-        stompClient.connect({}, () => {
-            stompClient.send("/app/register", {}, username);
+        // Подключаемся только если это профиль текущего пользователя
+        if (username === user) {
+            stompClient.connect({}, () => {
+                stompClient.send("/app/register", {}, username);
 
-            stompClient.subscribe('/topic/onlineStatus', (message) => {
-                const data = JSON.parse(message.body);
-                if (data.username === username) {
-                    const element = document.getElementById('profileImage');
-                    element.className = data.isOnline ? 'profileImage online' : 'profileImage offline';
-                }
+                stompClient.subscribe('/topic/onlineStatus', (message) => {
+                    const data = JSON.parse(message.body);
+                    if (data.username === username) {
+                        const element = document.getElementById('profileImage');
+                        element.className = data.isOnline ? 'profileImage online' : 'profileImage offline';
+                    }
+                });
             });
-        });
 
-        window.addEventListener('beforeunload', () => {
-            stompClient.send("/app/unregister", {}, username);
-        });
+            window.addEventListener('beforeunload', () => {
+                stompClient.send("/app/unregister", {}, username);
+            });
+        } else {
+            // Для чужого профиля просто проверяем онлайн статус
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/user/queue/status', (message) => {
+                    const isOnline = JSON.parse(message.body);
+                    const element = document.getElementById('profileImage');
+                    element.className = isOnline ? 'profileImage online' : 'profileImage offline';
+                });
+                stompClient.send("/app/requestStatus", {},
+                    JSON.stringify( {
+                        requestingUser: username,
+                        requestedUser: user
+                    }));
+            });
+        }
     </script>
     </body>
 </html>

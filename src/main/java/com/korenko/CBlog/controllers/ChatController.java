@@ -179,5 +179,12 @@ public class ChatController {
         Integer id = (Integer) message.get("id");
         String content = (String) message.get("content");
         messageService.updateMessage(id, content);
+        MessageEntity mess = messageService.getMessageById(id);
+
+        messagingTemplate.convertAndSendToUser(
+                mess.getRecipient(),
+                "/queue/messages",
+                messageService.getMessagesBetweenUsers(mess.getSender(), mess.getRecipient())
+        );
     }
 }
