@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelSearchButton = document.getElementById('cancelSearchButton');
     const openFilter = document.getElementById('openFilter');
     const closeFilter = document.getElementById('closeFilter');
+    const applyFilterButton = document.querySelector('.applyFilter');
+    const resetFilterButton = document.querySelector('.resetFilter');
 
     // поиск пользователей по кнопке
     searchButton.addEventListener('click', function () {
@@ -56,4 +58,20 @@ document.addEventListener('DOMContentLoaded', function() {
         this.style.display = 'none';
         openFilter.style.display = 'block';
     })
+
+    // применение фильтров
+    applyFilterButton.addEventListener('click', function() {
+        resetUserList();
+        performSearch();
+        const filterMenu = document.getElementById('filterMenu');
+        filterMenu.style.display = 'none';
+        closeFilter.style.display = 'none';
+        openFilter.style.display = 'block';
+    });
+
+    // сброс фильтров
+    resetFilterButton.addEventListener('click', function() {
+        resetFilters();
+        resetUserList();
+    });
 });
