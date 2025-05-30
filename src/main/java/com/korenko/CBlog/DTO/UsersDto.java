@@ -45,7 +45,4 @@ public class UsersDto {
         this.lastName = lastName;
         this.photoPath = photoPath;
     }
-
-    public UsersDto() {
-    }
 }

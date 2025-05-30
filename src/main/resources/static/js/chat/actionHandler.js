@@ -27,12 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // поиск пользователей по кнопке
-    searchButton.addEventListener('click', performSearch);
+    searchButton.addEventListener('click', function () {
+        resetUserList();
+        performSearch();
+    });
 
     // поиск пользователей по Enter
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
+            resetUserList();
             performSearch();
         }
     });

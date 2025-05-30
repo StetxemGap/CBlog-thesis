@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,5 +124,23 @@ public class MyController {
         Users user = userRepo.findByUsername(principal.getName());
         model.addAttribute("currentUser", user);
         return "chat";
+    }
+
+    @GetMapping("/allUsers")
+    public String allUsers(Model model, Principal principal) {
+        List<Users> usersAll = userRepo.findByActivationTrue();
+        List<UsersDto> usersNamesAll = usersAll.stream()
+                .map(user -> new UsersDto(user))
+                .collect(Collectors.toList());
+        model.addAttribute("usersAll", usersNamesAll);
+
+        List<String> allPositions = userDetailService.findAllPositions();
+        List<String> allCities = userDetailService.findAllCities();
+        model.addAttribute("positions", allPositions);
+        model.addAttribute("cities", allCities);
+
+        Users user = userRepo.findByUsername(principal.getName());
+        model.addAttribute("currentUser", user);
+        return "allUsers";
     }
 }
