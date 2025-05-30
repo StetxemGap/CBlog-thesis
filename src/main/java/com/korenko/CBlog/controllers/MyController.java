@@ -6,6 +6,7 @@ import com.korenko.CBlog.model.Users;
 import com.korenko.CBlog.model.UsersInfo;
 import com.korenko.CBlog.repo.UserRepo;
 import com.korenko.CBlog.service.ActivationService;
+import com.korenko.CBlog.service.MessageService;
 import com.korenko.CBlog.service.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -26,6 +28,8 @@ public class MyController {
 
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private MessageService messageService;
 
     @GetMapping("/login")
     public String auth(Model model) {
@@ -106,20 +110,30 @@ public class MyController {
     }
 
     @GetMapping("/chat")
-    public String usersOverview(Model model, Principal principal) {
-        List<Users> usersAll = userRepo.findByActivationTrue();
-        List<UsersDto> usersNamesAll = usersAll.stream()
-                .map(user -> new UsersDto(
-                        user.getUsername(),
-                        user.getUsersInfo().getFirstname(),
-                        user.getUsersInfo().getLastname(),
-                        user.getUsersInfo().getPhotoPath()
-                ))
-                .collect(Collectors.toList());
-        model.addAttribute("usersAll", usersNamesAll);
+    public String chat(@CookieValue(name = "currentChatUser", required = false) String selectedUsername, Model model, Principal principal) {
+        Users currentUser = userRepo.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currentUser);
 
-        Users user = userRepo.findByUsername(principal.getName());
-        model.addAttribute("currentUser", user);
+        // получаем никнеймы тех, с кем есть диалог
+        List<String> participantUsernames = messageService.findChatParticipants(currentUser.getUsername());
+
+        // получаем их данные
+        List<UsersDto> chatParticipants = participantUsernames.stream()
+                .map(username -> userRepo.findByUsername(username))
+                .filter(Objects::nonNull)
+                .map(user -> new UsersDto(user))
+                .collect(Collectors.toList());
+
+        model.addAttribute("usersAll", chatParticipants);
+
+        if (selectedUsername == null || selectedUsername.isEmpty()) {
+            UsersDto profile = userDetailService.getUserProfile(currentUser.getUsername());
+            model.addAttribute("selectedUser", profile);
+        } else {
+            UsersDto profile = userDetailService.getUserProfile(selectedUsername);
+            model.addAttribute("selectedUser", profile);
+        }
+
         return "chat";
     }
 

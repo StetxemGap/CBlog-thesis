@@ -4,6 +4,7 @@ import com.korenko.CBlog.model.ChatMessage;
 import com.korenko.CBlog.model.MessageEntity;
 import com.korenko.CBlog.repo.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,4 +102,9 @@ public class MessageService {
     public void updateMessage(Integer id, String content){
         messageRepository.updateMessageContentById(id, content);
     }
+
+    public List<String> findChatParticipants(String username) {
+        return messageRepository.findChatParticipants(username);
+    }
+
 }

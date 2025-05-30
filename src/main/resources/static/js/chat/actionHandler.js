@@ -6,7 +6,6 @@ window.addEventListener('beforeunload', () => {
 // функции срабатывающие при открытии
 document.addEventListener('DOMContentLoaded', function() {
     connect();
-
     // обработчики для поиска
     const searchInput = document.getElementById('searchInput')
     const searchButton = document.getElementById('searchButton');
@@ -55,10 +54,22 @@ document.addEventListener('DOMContentLoaded', function() {
         resetUserList();
     });
 
-    // загрузка состояния чата
-    const savedState = loadChatState();
-    if (savedState) {
-        restoreChat(savedState.userName, savedState.userImage, savedState.userId);
+    const currentChatUser = localStorage.getItem('currentChatUser');
+    if (currentChatUser !== null) {
+        localStorage.removeItem('currentChatUser');
+        const selectedUsername = document.getElementById('selectedUsername');
+        const userId = selectedUsername.getAttribute('data-user-id');
+        const userImage = '/uploads/' + selectedUsername.getAttribute('data-userImage');
+        const userName = selectedUsername.getAttribute('data-username');
+
+        saveChatState(userId, userName, userImage);
+        openChat(userName, userImage, userId);
+    } else {
+        // загрузка состояния чата
+        const savedState = loadChatState();
+        if (savedState) {
+            restoreChat(savedState.userName, savedState.userImage, savedState.userId);
+        }
     }
     resetUserList();
 });

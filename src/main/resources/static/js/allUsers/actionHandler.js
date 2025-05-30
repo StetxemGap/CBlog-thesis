@@ -75,3 +75,10 @@ document.addEventListener('DOMContentLoaded', function() {
         resetUserList();
     });
 });
+
+function startChat(button) {
+    const username = button.getAttribute('data-username');
+    localStorage.setItem('currentChatUser', username);
+    document.cookie = `currentChatUser=${username}; path=/; max-age=3600`;
+    window.location.href = `/chat`;
+}

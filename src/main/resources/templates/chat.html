@@ -23,6 +23,7 @@
 
     <div class="mainContainer">
         <div id="currentUser" th:data-username="${currentUser.username}" style="display: none;"></div>
+        <div id="selectedUsername" th:data-user-id="${selectedUser.username}" th:data-userImage="${selectedUser.photoPath}" th:data-username="${selectedUser.firstName} + ' ' + ${selectedUser.lastName}" style="display: none;"></div>
         <div class="mainChatContainer">
             <form class="usersContainer" th:action="@{/chat}" method="get" id="searchForm" onsubmit="return false;">
                 <div class="searchUsers">
