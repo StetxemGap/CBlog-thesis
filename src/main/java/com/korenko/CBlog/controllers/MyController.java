@@ -9,6 +9,7 @@ import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MessageService;
 import com.korenko.CBlog.service.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -164,5 +165,11 @@ public class MyController {
         model.addAttribute("profile", profile);
 
         return "profile";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public String admin() {
+        return "admin";
     }
 }

@@ -40,6 +40,7 @@ public class SecurityConfing {
                         .requestMatchers("/login", "style/**.css", "img/**.jpg", "img/**.png", "/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/activation").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/upload").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -73,7 +74,7 @@ public class SecurityConfing {
         return (request, response, authentication) -> {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Users user = userRepo.findByUsername(userDetails.getUsername());
-            if (user.isActivation()) {
+            if (user.getActivation()) {
                 response.sendRedirect("/profile");
             } else {
                 response.sendRedirect("/activation");

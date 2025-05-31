@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8"/>
         <title>Профиль</title>
@@ -35,6 +36,12 @@
             <div class="link goToAllUsers">
                 <a th:href="@{/allUsers}" class="button">
                     Пользователи
+                </a>
+            </div>
+
+            <div class="link goToAdminPage" sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/admin}" class="button" >
+                    Администратор
                 </a>
             </div>
         </div>   

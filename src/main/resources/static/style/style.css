@@ -53,7 +53,7 @@ body {
     border-right: rgba(128, 128, 128, 0.2) solid 1px;
 
     display: grid;
-    grid-template-rows: 60px repeat(3, 70px);
+    grid-template-rows: 60px repeat(4, 70px);
 }
 
 .link {
@@ -87,4 +87,8 @@ body {
 
 .goToAllUsers {
     grid-row: 4;
+}
+
+.goToAdminPage {
+    grid-row: 5;
 }
