@@ -4,7 +4,6 @@ import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.UserPrincipal;
 import com.korenko.CBlog.model.Users;
 import com.korenko.CBlog.model.UsersInfo;
-import com.korenko.CBlog.repo.UserRepo;
 import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MessageService;
 import com.korenko.CBlog.service.MyUserDetailService;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,8 +26,6 @@ import java.util.stream.Collectors;
 @Controller
 public class MyController {
 
-    @Autowired
-    private UserRepo userRepo;
     @Autowired
     private MessageService messageService;
 
@@ -62,7 +59,7 @@ public class MyController {
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Users user = userRepo.findByUsername(username);
+        Users user = userDetailService.findByUsername(username);
         model.addAttribute("currentUser", user);
 
         UsersDto profile = userDetailService.getUserProfile(principal.getName());
@@ -76,13 +73,12 @@ public class MyController {
     @GetMapping("/activation")
     public String activationPage(Model model, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
         String username = userPrincipal.getUsername();
-
-        Users user = userRepo.findByUsername(username);
+        Users user = userDetailService.findByUsername(username);
+        UsersInfo usersInfo = user.getUsersInfo() != null ? user.getUsersInfo() : new UsersInfo();
 
         model.addAttribute("userId", user.getId());
-        model.addAttribute("usersInfo", new UsersInfo());
+        model.addAttribute("usersInfo", usersInfo);
         return "activation";
     }
 
@@ -112,7 +108,7 @@ public class MyController {
 
     @GetMapping("/chat")
     public String chat(@CookieValue(name = "currentChatUser", required = false) String selectedUsername, Model model, Principal principal) {
-        Users currentUser = userRepo.findByUsername(principal.getName());
+        Users currentUser = userDetailService.findByUsername(principal.getName());
         model.addAttribute("currentUser", currentUser);
 
         // получаем никнеймы тех, с кем есть диалог
@@ -120,7 +116,7 @@ public class MyController {
 
         // получаем их данные
         List<UsersDto> chatParticipants = participantUsernames.stream()
-                .map(username -> userRepo.findByUsername(username))
+                .map(username -> userDetailService.findByUsername(username))
                 .filter(Objects::nonNull)
                 .map(user -> new UsersDto(user))
                 .collect(Collectors.toList());
@@ -140,7 +136,7 @@ public class MyController {
 
     @GetMapping("/allUsers")
     public String allUsers(Model model, Principal principal) {
-        List<Users> usersAll = userRepo.findByActivationTrue();
+        List<Users> usersAll = userDetailService.findByActivationTrue();
         List<UsersDto> usersNamesAll = usersAll.stream()
                 .map(user -> new UsersDto(user))
                 .collect(Collectors.toList());
@@ -151,14 +147,14 @@ public class MyController {
         model.addAttribute("positions", allPositions);
         model.addAttribute("cities", allCities);
 
-        Users user = userRepo.findByUsername(principal.getName());
+        Users user = userDetailService.findByUsername(principal.getName());
         model.addAttribute("currentUser", user);
         return "allUsers";
     }
 
     @GetMapping("/profile/{username}")
     public String viewUserProfile(@PathVariable String username, Model model, Principal principal) {
-        Users currentUser = userRepo.findByUsername(principal.getName());
+        Users currentUser = userDetailService.findByUsername(principal.getName());
         model.addAttribute("currentUser", currentUser);
 
         UsersDto profile = userDetailService.getUserProfile(username);
@@ -169,7 +165,23 @@ public class MyController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(Model model, Principal principal) {
+        Users currenUser = userDetailService.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currenUser);
+
+        List<UsersInfo> usersAll = userDetailService.findAllUsersInfo();
+
+        List<UsersDto> users = usersAll.stream()
+                .map(user -> new UsersDto(user))
+                .collect(Collectors.toList());
+
+        List<UsersDto> sortedUsers = users.stream()
+                .sorted(Comparator.comparing(UsersDto::getId))  // Сортировка по возрастанию (ASC)
+                .collect(Collectors.toList());
+        model.addAttribute("usersAll", sortedUsers);
+        ;
+
+
         return "admin";
     }
 }

@@ -12,14 +12,16 @@ import java.io.Serializable;
 @Getter
 public class Users implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String username;
     private String password;
-    private Boolean activation;
+    @Column(nullable = false)
+    private Boolean activation = false;
     @Column(nullable = false)
     private Boolean isAdmin;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UsersInfo usersInfo;
 
     @Override

@@ -16,7 +16,6 @@ function getSelectedFilters() {
 
 // проверка соответствия пользователя фильтрам
 function matchesFilters(user, filters) {
-    console.log(user.getAttribute('data-position') + ' ' + filters.position);
     // Проверка фильтра должности
     if (filters.position !== 'Не выбрано' &&
         user.getAttribute('data-position') !== filters.position) {

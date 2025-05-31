@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Getter
 public class UsersDto {
 
+    private Integer id;
     private String username;
     private String firstName;
     private String lastName;
@@ -22,6 +23,8 @@ public class UsersDto {
     private String officeFloor;
     private String officeNumber;
     private String photoPath;
+    private Boolean activation;
+    private Boolean admin;
 
     public UsersDto(Users user) {
         this.username = user.getUsername();
@@ -37,6 +40,17 @@ public class UsersDto {
         this.officeFloor = userInfo.getOfficeFloor();
         this.officeNumber = userInfo.getOfficeNumber();
         this.photoPath = userInfo.getPhotoPath();
+        this.activation = user.getActivation();
+    }
+
+    public UsersDto(UsersInfo user) {
+        this.id = user.getUser().getId();
+        this.username = user.getUser().getUsername();
+        this.firstName = user.getFirstname();
+        this.lastName = user.getLastname();
+        this.position = user.getPosition();
+        this.activation = user.getUser().getActivation();
+        this.admin = user.getUser().getIsAdmin();
     }
 
     public UsersDto(String username, String firstName, String lastName, String photoPath) {

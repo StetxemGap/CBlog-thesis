@@ -43,6 +43,7 @@ button:hover {
     border-radius: 20px;
     opacity: 0.5;
     width: 30vh;
+    min-width: 200px;
 
     font-family: 'Montserrat';
     font-size: medium;
@@ -53,10 +54,6 @@ button:hover {
 .searchUser:focus {
     outline: none;
     opacity: 0.808;
-}
-
-.openFilter {
-
 }
 
 .filterMenu {
@@ -173,9 +170,17 @@ button:hover {
     display: block;
 }
 
+.usersList {
+    margin-top: 3%;
+}
+
 .listItem {
     display: grid;
     grid-template-columns: 70px auto 65px 65px;
+    border-radius: 10px;
+    border: rgba(128, 128, 128, 0.2) solid 1px;
+    margin: 1%;
+    padding-left: 2%;
 }
 
 .userImage {
@@ -201,7 +206,7 @@ button:hover {
 .userName {
     grid-column: 2;
     align-self: center;
-    font-size: 20px;
+    font-size: 18px;
     padding-left: 15px;
 }
 

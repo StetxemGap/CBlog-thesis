@@ -1,12 +1,9 @@
 package com.korenko.CBlog.controllers;
 
-import com.korenko.CBlog.DTO.TypingNotification;
-import com.korenko.CBlog.repo.UserRepo;
+import com.korenko.CBlog.service.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -25,7 +22,7 @@ public class WebSocketController {
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private UserRepo userRepo;
+    private MyUserDetailService userDetailService;
 
     public WebSocketController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -48,7 +45,7 @@ public class WebSocketController {
     // принимаем запрос от клиента на список пользователей в сети
     @MessageMapping("/requestStatuses")
     public void sendStatuses(@Payload String requestingUsername) {
-        List<String> allUsers = userRepo.findAllActiveUsernames();
+        List<String> allUsers = userDetailService.findAllActiveUsernames();
 
         Map<String, Boolean> userStatuses = new HashMap<>();
 

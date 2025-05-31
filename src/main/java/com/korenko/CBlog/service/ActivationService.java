@@ -27,12 +27,25 @@ public class ActivationService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setActivation(true);
 
+        UsersInfo existingInfo = userInfoRepo.findByUserId(userId)
+                .orElse(new UsersInfo());
+
+        existingInfo.setFirstname(usersInfo.getFirstname());
+        existingInfo.setLastname(usersInfo.getLastname());
+        existingInfo.setPosition(usersInfo.getPosition());
+        existingInfo.setDob(usersInfo.getDob());
+        existingInfo.setGender(usersInfo.getGender());
+        existingInfo.setCity(usersInfo.getCity());
+        existingInfo.setStreet(usersInfo.getStreet());
+        existingInfo.setOfficeFloor(usersInfo.getOfficeFloor());
+        existingInfo.setOfficeNumber(usersInfo.getOfficeNumber());
+
         if (photoFile != null && !photoFile.isEmpty()) {
             String photoPath = fileStorageService.storeFile(photoFile, userId);
             usersInfo.setPhotoPath(photoPath);
         }
 
-        usersInfo.setUser(user);
-        userInfoRepo.save(usersInfo);
+        existingInfo.setUser(user);
+        userInfoRepo.save(existingInfo);
     }
 }

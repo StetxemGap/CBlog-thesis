@@ -187,7 +187,6 @@ function displaySingleMessage(msg) {
 
         messageMenu.innerHTML = `
               <div class="item change ${msg.id}" id="change"><img src="/img/change.png"></div>
-              <div class="item reply" id="reply"><img src="/img/reply.png"></div>
               <div class="item delete" id="delete"><img src="/img/delete.png"></div>
         `;
         parentDiv.appendChild(messageMenu);

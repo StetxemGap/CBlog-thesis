@@ -35,9 +35,9 @@
                 </div>
 
                 <div class="dynamicData">
-                    <input type="text" name="firstname" required>
-                    <input type="text" name="lastname" required>
-                    <input type="text" name="position" required>
+                    <input type="text" name="firstname" th:value="${usersInfo.firstname}" required>
+                    <input type="text" name="lastname" th:value="${usersInfo.lastname}" required>
+                    <input type="text" name="position" th:value="${usersInfo.position}" required>
                     <input type="date" name="dob">
                     <select name="gender">
                         <option value="none">Не указано</option>

@@ -29,7 +29,6 @@ public class UsersInfo implements Serializable {
     private String photoPath;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     private Users user;
-
 }
