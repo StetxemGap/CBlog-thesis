@@ -107,4 +107,7 @@ public class MessageService {
         return messageRepository.findChatParticipants(username);
     }
 
+    public void deleteAllMessagesByUser(String username) {
+        messageRepository.deleteAllMessagesByUser(username);
+    }
 }

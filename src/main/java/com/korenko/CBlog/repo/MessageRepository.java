@@ -29,5 +29,16 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Integer>
     @Query("SELECT DISTINCT CASE WHEN m.sender = :username THEN m.recipient ELSE m.sender END " +
             "FROM MessageEntity m WHERE m.sender = :username OR m.recipient = :username")
     List<String> findChatParticipants(@Param("username") String username);
+
+    @Modifying
+    @Query("UPDATE MessageEntity m SET " +
+            "m.sender = CASE WHEN m.sender = :username THEN 'DELETED' ELSE m.sender END, " +
+            "m.recipient = CASE WHEN m.recipient = :username THEN 'DELETED' ELSE m.recipient END " +
+            "WHERE m.sender = :username OR m.recipient = :username")
+    void markDeletedUser(@Param("username") String username);
+
+    @Modifying
+    @Query("DELETE FROM MessageEntity m WHERE m.sender = :username OR m.recipient = :username")
+    void deleteAllMessagesByUser(@Param("username") String username);
 }
 

@@ -176,7 +176,7 @@ public class MyController {
                 .collect(Collectors.toList());
 
         List<UsersDto> sortedUsers = users.stream()
-                .sorted(Comparator.comparing(UsersDto::getId))  // Сортировка по возрастанию (ASC)
+                .sorted(Comparator.comparing(UsersDto::getId))
                 .collect(Collectors.toList());
         model.addAttribute("usersAll", sortedUsers);
         ;

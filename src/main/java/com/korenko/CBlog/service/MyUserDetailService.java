@@ -90,7 +90,6 @@ public class MyUserDetailService implements UserDetailsService {
         userRepo.save(user);
     }
 
-
     public void deleteUserById(String username) {
         Users user = userRepo.findByUsername(username);
         userRepo.delete(user);
