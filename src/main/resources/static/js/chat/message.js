@@ -11,6 +11,10 @@ function getCurrentUser() {
 // открытие чата
 function openChat(userName, userImage, userId) {
 
+    const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
+    lastMessages[userId] = new Date().getTime();
+    localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
+
     const notificationDiv = document.getElementById('notification');
     notificationDiv.innerHTML = '';
 
@@ -217,12 +221,6 @@ function displaySingleMessage(msg) {
     const messageDiv = document.createElement('div');
     const messageMenu = document.createElement('div');
 
-    const otherUser = msg.sender === currentUser ? msg.recipient : msg.sender;
-
-    const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
-    lastMessages[otherUser] = new Date().getTime();
-    localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
-
     parentDiv.className = `parentMessages ${msg.id}`;
     messageDiv.className = msg.sender === currentUser ? 'messages sender' : 'messages recipient';
     if (currentUser === msg.sender) {
@@ -290,13 +288,15 @@ function displaySingleMessage(msg) {
         }
     });
 
-    // const lastMessageElement = document.querySelector(`.listItem[data-user-id="${otherUser}"] .lastMessage`);
-    // if (lastMessageElement) {
-    //     const content = msg.content.length > 20
-    //         ? msg.content.substring(0, 20) + '...'
-    //         : msg.content;
-    //     lastMessageElement.textContent = content;
-    // }
+    const otherUser = msg.sender === currentUser ? msg.recipient : msg.sender;
+
+    const lastMessageElement = document.querySelector(`.listItem[data-user-id="${otherUser}"] .lastMessage`);
+    if (lastMessageElement) {
+        const content = msg.content.length > 20
+            ? msg.content.substring(0, 20) + '...'
+            : msg.content;
+        lastMessageElement.textContent = content;
+    }
 }
 
 function updateLastMessages(lastMessages) {
