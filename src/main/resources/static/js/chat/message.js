@@ -36,9 +36,16 @@ function openChat(userName, userImage, userId) {
         createNewDialog(userId, userName, userImage);
     }
 
+    const userImageElement = document.querySelector(`.listItem[data-user-id="${userId}"] .userImage`);
+    let userStatus = "userImage";
+    const classes = userImageElement.className.split(' ');
+    if (classes.length > 1) {
+        userStatus ="userImage " + classes[1];
+    }
+
     const chatHeader = document.getElementById('chatHeader');
     chatHeader.innerHTML = `
-        <p class="userImage"><img src="${userImage}"></p>
+        <p class="${userStatus}"><img src="${userImage}"></p>
         <p class="opponentName ${userId}" id="opponent">${userName}</p>
         <button type="button" id="closeChatBtn">
             <img src="/img/close.png" height="25px" width="25px">
