@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,9 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 public class ChatController {
@@ -203,21 +206,6 @@ public class ChatController {
                 mess.getRecipient(),
                 "/queue/messages",
                 messageService.getMessagesBetweenUsers(mess.getSender(), mess.getRecipient())
-        );
-    }
-
-    @MessageMapping("/deleteDialog")
-    public void deleteDialog(@Payload String username) {
-        messageService.deleteAllMessagesByUser(username);
-    }
-
-    @MessageMapping("/requestLastMessages")
-    public void requestLastMessages(String username) {
-        List<MessageEntity> lastMessages = messageService.getLastMessagesForUser(username);
-        messagingTemplate.convertAndSendToUser(
-                username,
-                "/queue/lastMessages",
-                lastMessages
         );
     }
 }

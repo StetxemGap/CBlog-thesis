@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MessageRepository extends JpaRepository<MessageEntity, Integer> {
     List<MessageEntity> findBySenderOrderByTimestampAsc(String sender);
@@ -41,12 +40,5 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Integer>
     @Modifying
     @Query("DELETE FROM MessageEntity m WHERE m.sender = :username OR m.recipient = :username")
     void deleteAllMessagesByUser(@Param("username") String username);
-
-    @Query("SELECT m FROM MessageEntity m WHERE " +
-            "(m.sender = :username OR m.recipient = :username) AND " +
-            "m.timestamp = (SELECT MAX(m2.timestamp) FROM MessageEntity m2 WHERE " +
-            "(m2.sender = m.sender AND m2.recipient = m.recipient) OR " +
-            "(m2.sender = m.recipient AND m2.recipient = m.sender))")
-    List<MessageEntity> findLastMessagesForUser(@Param("username") String username);
 }
 

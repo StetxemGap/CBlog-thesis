@@ -42,8 +42,7 @@ public class ActivationService {
 
         if (photoFile != null && !photoFile.isEmpty()) {
             String photoPath = fileStorageService.storeFile(photoFile, userId);
-            System.out.println(photoPath);
-            existingInfo.setPhotoPath(photoPath);
+            usersInfo.setPhotoPath(photoPath);
         }
 
         existingInfo.setUser(user);

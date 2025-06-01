@@ -34,10 +34,10 @@ public class MyController {
         String helloString = "Здравствуйте!";
 
         LocalTime now = LocalTime.now();
-        LocalTime morning = LocalTime.of(4, 0);
+        LocalTime morning = LocalTime.of(5, 0);
         LocalTime day = LocalTime.of(12, 0);
         LocalTime evening = LocalTime.of(18, 0);
-        LocalTime night = LocalTime.of(23, 0);
+        LocalTime night = LocalTime.of(0, 0);
 
         if (now.isAfter(morning) && now.isBefore(day)) {
             helloString = "Доброго утра!";
@@ -45,7 +45,7 @@ public class MyController {
             helloString = "Доброго дня!";
         } else if (now.isAfter(evening) && now.isBefore(night)) {
             helloString = "Доброго вечера!";
-        } else {
+        } else if (now.isAfter(night) && now.isBefore(morning)) {
             helloString = "Доброй ночи!";
         }
 

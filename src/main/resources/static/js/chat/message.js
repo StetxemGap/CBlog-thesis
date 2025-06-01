@@ -124,7 +124,7 @@ function createNewDialog(userId, userName, userImage) {
                             <img src='${userImage}'>
                         </p>
                         <p class="userName">${userName}</p>
-                        <p class="lastMessage"></p>
+                        <p class="lastMessage">Последнее сообщение</p>
         `;
     usersList.appendChild(newListItem);
 }
@@ -256,6 +256,7 @@ function displaySingleMessage(msg) {
 
     parentDiv.addEventListener('click', function(e) {
         if (e.target.closest('.change')) {
+            console.log("Message id:", msg.id);
 
             const changeMessage = document.getElementById(`message${msg.id}`);
             const messageText = changeMessage.querySelector('.messagesText').textContent;
@@ -268,11 +269,7 @@ function displaySingleMessage(msg) {
                     e.preventDefault();
                     const content = newMessage.value.trim();
                     if (content !== msg.content) {
-                        stompClient.send("/app/updateMessage", {},
-                            JSON.stringify({
-                                id: msg.id,
-                                content: content
-                            }));
+
                         changeMessage.innerHTML = `
                             <p class="messagesText">${content}</p>
                              <p class="messagesTime">${formatTime(msg.timestamp)}</p>
@@ -287,71 +284,8 @@ function displaySingleMessage(msg) {
             });
         }
     });
-
-    const otherUser = msg.sender === currentUser ? msg.recipient : msg.sender;
-
-    const lastMessageElement = document.querySelector(`.listItem[data-user-id="${otherUser}"] .lastMessage`);
-    if (lastMessageElement) {
-        const content = msg.content.length > 20
-            ? msg.content.substring(0, 20) + '...'
-            : msg.content;
-        lastMessageElement.textContent = content;
-    }
 }
 
-function updateLastMessages(lastMessages) {
-    console.log("Update last message");
-    lastMessages.forEach(msg => {
-
-        const currentUser = getCurrentUser();
-        const otherUser = msg.sender === currentUser ? msg.recipient : msg.sender;
-        const userElement = document.querySelector(`.listItem[data-user-id="${otherUser}"] .lastMessage`);
-
-        if (msg.sender === currentUser) {
-            if (userElement) {
-                const text = msg.content.length > 20
-                    ? 'Вы: ' + msg.content.substring(0, 20) + '...'
-                    : 'Вы: ' + msg.content;
-                userElement.textContent = text;
-            }
-        } else {
-            if (userElement) {
-                const text = msg.content.length > 20
-                    ? msg.content.substring(0, 20) + '...'
-                    : msg.content;
-                userElement.textContent = text;
-            }
-        }
-        const lastMessagesStorage = JSON.parse(localStorage.getItem('lastMessages') || '{}');
-        lastMessagesStorage[msg.otherUser] = new Date(msg.timestamp).getTime();
-        localStorage.setItem('lastMessages', JSON.stringify(lastMessagesStorage));
-    });
-}
-
-function updateLastMessage(content, sender, recipient, otherUser, timestamp) {
-    const userElement = document.querySelector(`.listItem[data-user-id="${otherUser}"] .lastMessage`);
-
-    const currentUser = getCurrentUser();
-    if (sender === currentUser) {
-        if (userElement) {
-            const text = content.length > 20
-                ? 'Вы: ' + content.substring(0, 20) + '...'
-                : 'Вы: ' + content;
-            userElement.textContent = text;
-        }
-    } else {
-        if (userElement) {
-            const text = content.length > 20
-                ? content.substring(0, 20) + '...'
-                : content;
-            userElement.textContent = text;
-        }
-    }
-
-    const lastMessagesStorage = JSON.parse(localStorage.getItem('lastMessages') || '{}');
-    lastMessagesStorage[otherUser] = new Date(timestamp).getTime();
-    localStorage.setItem('lastMessages', JSON.stringify(lastMessagesStorage));
-}
 // форматированное время для сообщений
 function formatTime(timestamp) {
     const date = new Date(timestamp);

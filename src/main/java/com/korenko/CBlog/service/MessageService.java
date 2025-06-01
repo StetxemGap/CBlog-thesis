@@ -1,8 +1,11 @@
 package com.korenko.CBlog.service;
 
+import com.korenko.CBlog.model.ChatMessage;
 import com.korenko.CBlog.model.MessageEntity;
 import com.korenko.CBlog.repo.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,9 +109,5 @@ public class MessageService {
 
     public void deleteAllMessagesByUser(String username) {
         messageRepository.deleteAllMessagesByUser(username);
-    }
-
-    public List<MessageEntity> getLastMessagesForUser(String username) {
-        return messageRepository.findLastMessagesForUser(username);
     }
 }

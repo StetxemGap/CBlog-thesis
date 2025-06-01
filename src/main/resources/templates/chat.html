@@ -43,7 +43,7 @@
                             <img th:unless="${user.photoPath != null}" th:src="@{/img/user.png}">
                         </p>
                         <p class="userName" th:text="${user.firstName + ' ' + user.lastName}"></p>
-                        <p class="lastMessage"></p>
+                        <p class="lastMessage">Последнее сообщение</p>
                     </div>
                 </div>
             </form>
