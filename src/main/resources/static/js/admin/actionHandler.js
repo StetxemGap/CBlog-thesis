@@ -73,15 +73,35 @@ function getUserInfo() {
     const inputPosition = document.getElementById('inputPosition').value.trim();
     const inputAdminRole = document.getElementById('inputAdminRole').checked;
 
-    stompClient.send("/app/addNewUser", {},
-        JSON.stringify({
-            username: inputUsername,
-            password: inputPassword,
-            firstname: inputFirstname,
-            lastname: inputLastname,
-            position: inputPosition,
-            admin: inputAdminRole
-        }));
+    const inputElement = document.getElementById('inputUsername');
+
+    inputElement.setCustomValidity('');
+
+    const allUsernames = document.querySelector(`.listItem[user-id="${inputUsername}"]`);
+    if (allUsernames) {
+        console.log("Пользователь существует");
+        inputElement.setCustomValidity("Пользователь уже существует!");
+        inputElement.reportValidity();
+        inputElement.addEventListener('input', function (){
+            inputElement.setCustomValidity('');
+            inputElement.reportValidity();
+        });
+    } else if (inputUsername && inputPassword &&
+        inputFirstname && inputLastname &&
+        inputPosition) {
+        inputElement.setCustomValidity('');
+        inputElement.reportValidity();
+        console.log(inputFirstname);
+        stompClient.send("/app/addNewUser", {},
+            JSON.stringify({
+                username: inputUsername,
+                password: inputPassword,
+                firstname: inputFirstname,
+                lastname: inputLastname,
+                position: inputPosition,
+                admin: inputAdminRole
+            }));
+    }
 }
 
 let currenView = document.getElementById('mainViewUsers');

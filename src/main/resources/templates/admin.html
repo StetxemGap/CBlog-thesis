@@ -50,6 +50,7 @@
                              th:attr="class=${user.admin} ? 'listItem admin' : 'listItem'"
                              th:if="${user.username} != ${currentUser.username} "
                              th:id="'listItem-' + ${user.username}"
+                             th:user-id="${user.username}"
                              th:data-search-text="${user.firstName + ' ' + user.lastName + ' ' + user.username+ ' ' + user.id.toString()}"
                              th:data-activation="${user.activation}">
                             <p class="id" th:text="${user.id.toString()}"></p>
