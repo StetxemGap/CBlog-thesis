@@ -55,6 +55,7 @@ function resetUserList() {
         usersList.appendChild(user);
         user.style.display = 'grid';
     });
+    stompClient.send("/app/requestLastMessages", {}, getCurrentUser());
 }
 
 // функция сортировки пользователей по последнему взаимодействию

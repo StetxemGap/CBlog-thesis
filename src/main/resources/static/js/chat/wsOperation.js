@@ -9,15 +9,27 @@ function connect() {
     stompClient.connect({},  () => {
         isConnected = true;
 
+        stompClient.subscribe('/user/queue/lastMessages', function(message) {
+            const lastMessages = JSON.parse(message.body);
+            updateLastMessages(lastMessages);
+        });
+
         // подписка для получения истории сообщений
         stompClient.subscribe('/user/queue/messages', function(message) {
             const msg = JSON.parse(message.body);
+            const sender = msg[0].sender;
+            const recipient = msg[0].recipient;
+            const currentUser = getCurrentUser();
+            const opponent = document.getElementById('opponent').classList.toString();
 
             const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
             lastMessages[msg.sender] = new Date().getTime();
             localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
 
-            displayMessages(msg);
+            if ((recipient === currentUser && 'opponentName ' + sender === opponent)
+                || sender === currentUser) {
+                displayMessages(msg);
+            }
             resetUserList();
         });
 
@@ -43,6 +55,8 @@ function connect() {
             const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
             lastMessages[msg.sender] = new Date().getTime();
             localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
+
+            updateLastMessage(msg.content, msg.sender, msg.recipient, opponent, msg.timestamp);
 
             if ((recipient === currentUser && 'opponentName ' + sender === opponent) || sender === currentUser) {
                 displayMessages(msg);
