@@ -11,11 +11,6 @@ function saveChatState(userId, userName, userImage) {
         userImage: userImage,
         timestamp: new Date().getTime()
     }));
-
-    // время последнего сообщения
-    const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
-    lastMessages[userId] = new Date().getTime();
-    localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
 }
 
 // загрузка чата

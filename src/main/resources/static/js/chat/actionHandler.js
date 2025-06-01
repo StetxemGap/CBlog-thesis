@@ -74,21 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
     resetUserList();
 });
 
-// обработка клика по диалогу
-document.querySelectorAll('.listItem').forEach(item => {
-    // получаем данные для вывода в шапку чата
-    item.addEventListener('click', function() {
-        const userId = this.getAttribute('data-user-id');
-        const userName = this.querySelector('.userName').textContent;
-        const userImage = this.querySelector('.userImage img').src;
-
-        // сохраняем открытый чат
-        saveChatState(userId, userName, userImage);
-
-        // открываем его
-        openChat(userName, userImage, userId);
-    });
-});
 
 // обработка кнопки закрытия чата
 document.addEventListener('click', function(e) {
