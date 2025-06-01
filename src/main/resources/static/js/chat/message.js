@@ -124,7 +124,7 @@ function createNewDialog(userId, userName, userImage) {
                             <img src='${userImage}'>
                         </p>
                         <p class="userName">${userName}</p>
-                        <p class="lastMessage">Последнее сообщение</p>
+                        <p class="lastMessage"></p>
         `;
     usersList.appendChild(newListItem);
 }
@@ -217,7 +217,7 @@ function displaySingleMessage(msg) {
     const currentUser = getCurrentUser();
 
     const otherUser = msg.sender === currentUser ? msg.recipient : msg.sender;
-    updateLastMessageInList(otherUser, msg.content);
+    updateLastMessageInList(otherUser, msg);
 
     const parentDiv = document.createElement('div')
     const messageDiv = document.createElement('div');
@@ -294,10 +294,17 @@ function displaySingleMessage(msg) {
 
 function updateLastMessageInList(userId, message) {
     const userElement = document.querySelector(`.listItem[data-user-id="${userId}"]`);
+    const sender = message.sender;
+    const currentUser = getCurrentUser();
+
     if (userElement) {
         const lastMessageElement = userElement.querySelector('.lastMessage');
         if (lastMessageElement) {
-            lastMessageElement.textContent = message.length > 20 ? message.substring(0, 20) + '...' : message;
+            if (sender === currentUser) {
+                lastMessageElement.textContent = message.content.length > 20 ? 'Вы: ' + message.content.substring(0, 20) + '...' : 'Вы: ' + message.content;
+            } else {
+                lastMessageElement.textContent = message.content.length > 20 ? message.content.substring(0, 20) + '...' : message.content;
+            }
         }
     }
 }
