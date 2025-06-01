@@ -128,7 +128,7 @@ input:focus {
 
 .listItem {
     display: grid;
-    grid-template-columns: 10px 80px 170px auto 140px 15px 20px 30px;
+    grid-template-columns: 10px 80px 170px auto 140px 20px 30px;
     gap: 5%;
     padding: 1% 2% 1% 1%;
     font-size: 15px;

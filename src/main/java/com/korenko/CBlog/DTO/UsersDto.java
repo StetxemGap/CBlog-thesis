@@ -41,6 +41,7 @@ public class UsersDto {
         this.officeNumber = userInfo.getOfficeNumber();
         this.photoPath = userInfo.getPhotoPath();
         this.activation = user.getActivation();
+        this.admin = user.getIsAdmin();
     }
 
     public UsersDto(UsersInfo user) {

@@ -91,14 +91,14 @@ public class MyUserDetailService implements UserDetailsService {
     }
 
 
-    public void updateUserInfo(Integer userId, String firstname, String lastname, String position) {
-        Users user = userRepo.findById(userId).orElseThrow();
-        UsersInfo info = user.getUsersInfo();
+    public void deleteUserById(String username) {
+        Users user = userRepo.findByUsername(username);
+        userRepo.delete(user);
+    }
 
-        info.setFirstname(firstname);
-        info.setLastname(lastname);
-        info.setPosition(position);
-
-        userRepo.save(user);
+    public void deleteUserInfoById(String username) {
+        Users tmp = userRepo.findByUsername(username);
+        UsersInfo user = userInfoRepo.findByUserId(tmp.getId()).orElse(new UsersInfo());
+        userInfoRepo.delete(user);
     }
 }

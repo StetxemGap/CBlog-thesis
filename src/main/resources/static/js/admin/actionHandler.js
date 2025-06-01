@@ -2,6 +2,11 @@ window.addEventListener('beforeunload', () => {
     stompClient.send("/app/unregister", {}, getCurrentUser());
 });
 
+function getCurrentUser() {
+    const element = document.getElementById('currentUser');
+    return element ? element.getAttribute('data-username') : null;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     connect();
 
@@ -18,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
     usersButton.addEventListener('click', () => switchView(mainViewUsers));
     hrButton.addEventListener('click',() => switchView(mainViewHR));
     passwordButton.addEventListener('click',() => switchView(mainViewPassword));
-    addUserButton.addEventListener('click', () => switchView(mainViewCreateUser));
+    addUserButton.addEventListener('click', function () { switchView(mainViewCreateUser);
+    mainViewCreateUser.querySelector('.viewHeader').textContent = "Создание пользователя"});
 
     const searchInput = document.getElementById('searchInput')
     const searchButton = document.getElementById('searchButton');
@@ -63,9 +69,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitNewUser = document.getElementById('submitNewUser');
 
     submitNewUser.addEventListener('click', getUserInfo);
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.deleteUser')) {
+            const button = e.target.closest('.deleteUser');
+            const username = button.dataset.username;
+            deleteUser(username);
+        }
+    });
 });
 
 function getUserInfo() {
+
     const inputUsername = document.getElementById('inputUsername').value.trim();
     const inputPassword = document.getElementById('inputPassword').value.trim();
     const inputFirstname = document.getElementById('inputFirstname').value.trim();
@@ -102,6 +117,14 @@ function getUserInfo() {
                 admin: inputAdminRole
             }));
     }
+}
+
+function deleteUser(username) {
+    stompClient.send("/app/deleteUser", {}, username);
+    const usersList = document.getElementById('usersList');
+    const listItem = document.getElementById(`listItem-${username}`);
+
+    usersList.removeChild(listItem);
 }
 
 let currenView = document.getElementById('mainViewUsers');

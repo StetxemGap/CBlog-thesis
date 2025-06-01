@@ -42,7 +42,7 @@
                         <p for="haveActivation">Активированные</p>
                     </div>
 
-                    <div class="usersList">
+                    <div class="usersList" id="usersList">
                         <button class="addUserButton" id="addUserButton" title="Добавить пользователя">
                             <img src="/img/user-add.png">
                         </button>
@@ -66,10 +66,7 @@
                             <a th:unless = "${user.activation}" class="userAction seeUserProfile inactive">
                                 <img src="/img/profile.png">
                             </a>
-                            <button class="userAction editUser">
-                                <img src="/img/change.png">
-                            </button>
-                            <button class="userAction deleteUser">
+                            <button class="userAction deleteUser" th:data-username="${user.username}">
                                 <img src="/img/delete.png">
                             </button>
                         </div>
