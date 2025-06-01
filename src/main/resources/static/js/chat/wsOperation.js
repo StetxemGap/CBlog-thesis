@@ -21,11 +21,21 @@ function connect() {
             resetUserList();
         });
 
+        stompClient.subscribe('/user/queue/newDialog', function (message) {
+            const msg = JSON.parse(message.body);
+            const userName = msg.firstName + ' ' + msg.lastName;
+            const userImage = '/uploads/' + msg.photoPath;
+            console.log(msg);
+            console.log(msg.username + ' ' + userName + ' ' + userImage)
+            createNewDialog(msg.username, userName, userImage);
+            stompClient.send("/app/requestStatuses", {}, getCurrentUser());
+        });
+
         // подписка для получения сообщений в режиме реального времени
         stompClient.subscribe('/user/queue/newMessages', function(message) {
             const msg = JSON.parse(message.body);
             const recipient = msg.recipient;
-            console.log("recipient " + msg.recipient);
+
             const sender = msg.sender;
             const currentUser = getCurrentUser();
             const opponent = document.getElementById('opponent').classList.toString();
@@ -34,9 +44,6 @@ function connect() {
             lastMessages[msg.sender] = new Date().getTime();
             localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
 
-
-            console.log( recipient + ' === ' + currentUser);
-            console.log( 'opponentName ' + sender + ' === ' + opponent);
             if ((recipient === currentUser && 'opponentName ' + sender === opponent) || sender === currentUser) {
                 displayMessages(msg);
             }

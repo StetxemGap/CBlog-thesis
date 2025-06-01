@@ -1,8 +1,10 @@
 package com.korenko.CBlog.controllers;
 
 import com.korenko.CBlog.DTO.MessageDTO;
+import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.MessageEntity;
 import com.korenko.CBlog.service.MessageService;
+import com.korenko.CBlog.service.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -27,7 +29,9 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 public class ChatController {
@@ -38,10 +42,27 @@ public class ChatController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    MyUserDetailService userDetailService;
+
     @MessageMapping("/handleMessage")
     public void handleMessage(@Payload MessageDTO message, Principal principal) {
         String sender = principal.getName();
         String recipientUS = message.getRecipient();
+
+
+        List<String> participantUsernames = messageService.findChatParticipants(recipientUS);
+        boolean existChat = participantUsernames.contains(sender);
+        System.out.println(existChat);
+        if (!existChat) {
+            System.out.println("Create new dialog");
+            UsersDto profile = userDetailService.getUserProfile(sender);
+            messagingTemplate.convertAndSendToUser(
+                    recipientUS,
+                    "/queue/newDialog",
+                    profile
+            );
+        }
 
         if (message.getContent().length() > 255) {
             List<MessageEntity> messageParts = messageService.saveLongMessageToDatabase(

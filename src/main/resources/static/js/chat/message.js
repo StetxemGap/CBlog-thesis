@@ -24,6 +24,18 @@ function openChat(userName, userImage, userId) {
     typingIndicator.textContent = 'печатает...';
     notificationDiv.appendChild(typingIndicator);
 
+    // смотрим новый ли пользователь добавляется в чат или нет
+    const listItems = document.querySelectorAll('.listItem');
+    const userIds = [];
+    listItems.forEach(item => {
+        userIds.push(item.dataset.userId);
+    });
+    if (userIds.includes(userId)) {
+        console.log('Пользователь найден');
+    } else {
+        createNewDialog(userId, userName, userImage);
+    }
+
     const chatHeader = document.getElementById('chatHeader');
     chatHeader.innerHTML = `
         <p class="userImage"><img src="${userImage}"></p>
@@ -84,6 +96,30 @@ function sendTypingNotification(isTyping, userId) {
             isTyping: isTyping
         })
     );
+}
+
+function createNewDialog(userId, userName, userImage) {
+    const usersList = document.getElementById('usersList');
+    const newListItem = document.createElement('div');
+    newListItem.className = 'listItem';
+    newListItem.id = `listItem ${userId}`;
+    console.log("userImage " + userImage);
+    if (userImage === "/uploads/null") {
+        userImage = "/img/user.png";
+        console.log("userImage " + userImage);
+    }
+    console.log(userImage);
+    newListItem.setAttribute('data-user-id', `${userId}`);
+    newListItem.setAttribute('data-user-name', `${userName}`);
+    newListItem.setAttribute('data-search-text', `${userId} ${userName}`);
+    newListItem.innerHTML = `
+                         <p class="userImage">
+                            <img src='${userImage}'>
+                        </p>
+                        <p class="userName">${userName}</p>
+                        <p class="lastMessage">Последнее сообщение</p>
+        `;
+    usersList.appendChild(newListItem);
 }
 
 // закидываем сообщения серверу
@@ -226,11 +262,7 @@ function displaySingleMessage(msg) {
                     e.preventDefault();
                     const content = newMessage.value.trim();
                     if (content !== msg.content) {
-                        stompClient.send("/app/updateMessage", {},
-                            JSON.stringify({
-                                id: msg.id,
-                                content: content
-                            }));
+
                         changeMessage.innerHTML = `
                             <p class="messagesText">${content}</p>
                              <p class="messagesTime">${formatTime(msg.timestamp)}</p>

@@ -6,6 +6,7 @@ window.addEventListener('beforeunload', () => {
 // функции срабатывающие при открытии
 document.addEventListener('DOMContentLoaded', function() {
     connect();
+
     // обработчики для поиска
     const searchInput = document.getElementById('searchInput')
     const searchButton = document.getElementById('searchButton');
