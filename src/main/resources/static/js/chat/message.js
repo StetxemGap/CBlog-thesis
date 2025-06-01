@@ -214,8 +214,10 @@ function displayMessages(messages) {
 
 function displaySingleMessage(msg) {
     const chatBody = document.getElementById('chatBody');
-
     const currentUser = getCurrentUser();
+
+    const otherUser = msg.sender === currentUser ? msg.recipient : msg.sender;
+    updateLastMessageInList(otherUser, msg.content);
 
     const parentDiv = document.createElement('div')
     const messageDiv = document.createElement('div');
@@ -288,6 +290,16 @@ function displaySingleMessage(msg) {
             });
         }
     });
+}
+
+function updateLastMessageInList(userId, message) {
+    const userElement = document.querySelector(`.listItem[data-user-id="${userId}"]`);
+    if (userElement) {
+        const lastMessageElement = userElement.querySelector('.lastMessage');
+        if (lastMessageElement) {
+            lastMessageElement.textContent = message.length > 20 ? message.substring(0, 20) + '...' : message;
+        }
+    }
 }
 
 // форматированное время для сообщений

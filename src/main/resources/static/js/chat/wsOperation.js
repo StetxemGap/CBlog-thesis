@@ -54,6 +54,9 @@ function connect() {
             lastMessages[msg.sender] = new Date().getTime();
             localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
 
+            const otherUser = sender === currentUser ? recipient : sender;
+            updateLastMessageInList(otherUser, msg.content);
+
             if ((recipient === currentUser && 'opponentName ' + sender === opponent) || sender === currentUser) {
                 displayMessages(msg);
             }
