@@ -269,7 +269,11 @@ function displaySingleMessage(msg) {
                     e.preventDefault();
                     const content = newMessage.value.trim();
                     if (content !== msg.content) {
-
+                        stompClient.send("/app/updateMessage", {},
+                            JSON.stringify({
+                                id: msg.id,
+                                content: content
+                            }));
                         changeMessage.innerHTML = `
                             <p class="messagesText">${content}</p>
                              <p class="messagesTime">${formatTime(msg.timestamp)}</p>

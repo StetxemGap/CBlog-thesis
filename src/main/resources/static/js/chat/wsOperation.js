@@ -13,11 +13,21 @@ function connect() {
         stompClient.subscribe('/user/queue/messages', function(message) {
             const msg = JSON.parse(message.body);
 
+            const sender = msg[0].sender;
+            const recipient = msg[0].recipient;
+            const opponent = document.getElementById('opponent').classList.toString();
+            const otherUser = sender === currentUser ? recipient : sender;
+
+            console.log( recipient + ' === ' + currentUser);
+            console.log( 'opponentName ' + otherUser + ' === ' + opponent);
+
             const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
-            lastMessages[msg.sender] = new Date().getTime();
+            lastMessages[msg[0].sender] = new Date().getTime();
             localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
 
-            displayMessages(msg);
+            if ('opponentName ' + otherUser === opponent) {
+                displayMessages(msg);
+            }
             resetUserList();
         });
 
