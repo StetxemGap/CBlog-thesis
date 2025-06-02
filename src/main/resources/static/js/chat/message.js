@@ -111,7 +111,7 @@ function createNewDialog(userId, userName, userImage) {
 
     const usersList = document.getElementById('usersList');
     const newListItem = document.createElement('div');
-    newListItem.className = 'listItem';
+    newListItem.className = 'listItem newMessage';
     newListItem.id = `listItem ${userId}`;
     console.log("userImage " + userImage);
     if (userImage === "/uploads/null") {
@@ -193,6 +193,10 @@ function uploadFile(file) {
 
 // запрос у сервера сообщений между двумя пользователями
 function loadChatMessages(recipientId) {
+    stompClient.send("/app/allMessagesRead", {}, JSON.stringify({
+        sender: getCurrentUser(),
+        opponent: recipientId
+    }));
     stompClient.send("/app/requestMessages", {},
         JSON.stringify({
             otherUser: recipientId

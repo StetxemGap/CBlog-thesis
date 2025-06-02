@@ -81,7 +81,7 @@
     grid-template-rows: 50% 50%;
     grid-template-columns: 75px auto;
 
-    margin: 0 5px 0 5px;
+    margin: 10px 5px 10px 5px;
     border-radius: 5px;
     transition: background-color 0.2s ease-in-out;
     padding-left: 5px;
@@ -280,6 +280,10 @@
 
 .unchecked {
     opacity: 0.6;
+}
+
+.newMessage {
+    box-shadow: 1px 1px 10px 2px blueviolet;
 }
 
 .chatInput {

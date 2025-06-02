@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // обрабатывает клик по пользователю для вывода диалога
     usersList.addEventListener('click', function(e) {
-        const listItem = e.target.closest('.listItem');
+        const listItem = e.target.closest('.listItem' || '.listItem newMessage');
         if (listItem) {
             const userId = listItem.getAttribute('data-user-id');
             const userName = listItem.querySelector('.userName').textContent;
@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 sender: getCurrentUser(),
                 opponent: userId
             }));
+
+            const opponentElement = document.getElementById(`listItem-${userId}`);
+            opponentElement.className = 'listItem';
 
             saveChatState(userId, userName, userImage);
             openChat(userName, userImage, userId);

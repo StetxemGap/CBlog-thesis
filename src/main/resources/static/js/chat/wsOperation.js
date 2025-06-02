@@ -95,6 +95,9 @@ function connect() {
                     }));
                 }
                 displayMessages(msg);
+            } else {
+                const opponentElement = document.getElementById(`listItem-${sender}`);
+                opponentElement.className = 'listItem newMessage';
             }
             resetUserList();
         });
