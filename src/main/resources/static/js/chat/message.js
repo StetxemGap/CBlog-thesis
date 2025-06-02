@@ -111,7 +111,7 @@ function createNewDialog(userId, userName, userImage) {
 
     const usersList = document.getElementById('usersList');
     const newListItem = document.createElement('div');
-    newListItem.className = 'listItem newMessage';
+    newListItem.className = 'listItem';
     newListItem.id = `listItem ${userId}`;
     console.log("userImage " + userImage);
     if (userImage === "/uploads/null") {
