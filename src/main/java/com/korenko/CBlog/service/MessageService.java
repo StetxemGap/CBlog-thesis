@@ -127,9 +127,11 @@ public class MessageService {
             if (lastMsg != null) {
                 lastMessages.put(opponent,
                         new LastMessageDTO(
+                                lastMsg.getId(),
                                 lastMsg.getSender(),
                                 lastMsg.getContent(),
-                                lastMsg.getTimestamp()
+                                lastMsg.getTimestamp(),
+                                lastMsg.getIsRead()
                         ));
             }
         });

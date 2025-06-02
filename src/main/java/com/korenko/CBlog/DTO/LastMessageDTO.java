@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LastMessageDTO {
+    private Integer id;
     private String sender;
     private String content;
     private LocalDateTime timestamp;
+    private Boolean isRead;
 }

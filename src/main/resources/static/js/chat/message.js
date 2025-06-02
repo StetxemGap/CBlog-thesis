@@ -311,11 +311,14 @@ function updateLastMessageInList(userId, message) {
 
     if (userElement) {
         const lastMessageElement = userElement.querySelector('.lastMessage');
+        lastMessageElement.id = `lastMessage${message.id}`;
         if (lastMessageElement) {
             if (sender === currentUser) {
                 lastMessageElement.textContent = message.content.length > 20 ? 'Вы: ' + message.content.substring(0, 20) + '...' : 'Вы: ' + message.content;
+                lastMessageElement.className = message.isRead ? 'lastMessage' : 'lastMessage unchecked';
             } else {
                 lastMessageElement.textContent = message.content.length > 20 ? message.content.substring(0, 20) + '...' : message.content;
+                lastMessageElement.className = message.isRead ? 'lastMessage' : 'lastMessage newMessage';
             }
         }
     }
@@ -324,6 +327,8 @@ function updateLastMessageInList(userId, message) {
 function updateMessageStatus(id) {
     const msg = document.getElementById(`message${id}`);
     msg.className = 'messages sender';
+    const lastMsg = document.getElementById(`lastMessage${id}`);
+    lastMsg.className = 'lastMessage';
 }
 
 // форматированное время для сообщений

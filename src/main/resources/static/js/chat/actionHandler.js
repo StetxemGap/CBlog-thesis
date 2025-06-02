@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 opponent: userId
             }));
 
+            const lastMessageElement = listItem.querySelector('.lastMessage.newMessage');
+            if (lastMessageElement) {lastMessageElement.className = 'lastMessage';}
+
             saveChatState(userId, userName, userImage);
             openChat(userName, userImage, userId);
         }
