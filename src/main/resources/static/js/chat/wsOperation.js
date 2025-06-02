@@ -9,6 +9,22 @@ function connect() {
     stompClient.connect({},  () => {
         isConnected = true;
 
+        stompClient.send("/app/requestAllLastMessages", {}, getCurrentUser());
+
+        stompClient.subscribe('/user/queue/allLastMessages', function(message) {
+            const lastMessages = JSON.parse(message.body);
+
+            Object.entries(lastMessages).forEach(([userId, messageData]) => {
+                updateLastMessageInList(userId, messageData);
+
+                const lastMessagesStorage = JSON.parse(localStorage.getItem('lastMessages') || '{}');
+                lastMessagesStorage[userId] = messageData.timestamp;
+                localStorage.setItem('lastMessages', JSON.stringify(lastMessagesStorage));
+            });
+
+            resetUserList();
+        });
+
         // подписка для получения истории сообщений
         stompClient.subscribe('/user/queue/messages', function(message) {
             const msg = JSON.parse(message.body);

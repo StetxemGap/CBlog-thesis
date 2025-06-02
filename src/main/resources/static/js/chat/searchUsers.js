@@ -57,7 +57,6 @@ function resetUserList() {
     });
 }
 
-// функция сортировки пользователей по последнему взаимодействию
 function sortUsersByLastMessage(users) {
     const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
 

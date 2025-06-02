@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             restoreChat(savedState.userName, savedState.userImage, savedState.userId);
         }
     }
+
     resetUserList();
 });
 

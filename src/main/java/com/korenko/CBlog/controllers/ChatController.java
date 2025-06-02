@@ -1,5 +1,6 @@
 package com.korenko.CBlog.controllers;
 
+import com.korenko.CBlog.DTO.LastMessageDTO;
 import com.korenko.CBlog.DTO.MessageDTO;
 import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.MessageEntity;
@@ -14,6 +15,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -207,5 +209,11 @@ public class ChatController {
                 "/queue/messages",
                 messageService.getMessagesBetweenUsers(mess.getSender(), mess.getRecipient())
         );
+    }
+
+    @MessageMapping("/requestAllLastMessages")
+    @SendToUser("/queue/allLastMessages")
+    public Map<String, LastMessageDTO> getAllLastMessages(@Payload String currentUser) {
+        return messageService.getLastMessagesForUser(currentUser);
     }
 }

@@ -40,5 +40,20 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Integer>
     @Modifying
     @Query("DELETE FROM MessageEntity m WHERE m.sender = :username OR m.recipient = :username")
     void deleteAllMessagesByUser(@Param("username") String username);
+
+    @Query("SELECT DISTINCT CASE " +
+            "WHEN m.sender = :currentUser THEN m.recipient " +
+            "ELSE m.sender END " +
+            "FROM MessageEntity m " +
+            "WHERE m.sender = :currentUser OR m.recipient = :currentUser")
+    List<String> findOpponents(@Param("currentUser") String currentUser);
+
+    @Query("SELECT m FROM MessageEntity m " +
+            "WHERE (m.sender = :user1 AND m.recipient = :user2) " +
+            "OR (m.sender = :user2 AND m.recipient = :user1) " +
+            "ORDER BY m.timestamp DESC LIMIT 1")
+    MessageEntity findLastMessageBetweenUsers(
+            @Param("user1") String user1,
+            @Param("user2") String user2);
 }
 

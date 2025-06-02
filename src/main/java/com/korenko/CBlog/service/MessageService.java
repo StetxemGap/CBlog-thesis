@@ -1,17 +1,17 @@
 package com.korenko.CBlog.service;
 
-import com.korenko.CBlog.model.ChatMessage;
+import com.korenko.CBlog.DTO.LastMessageDTO;
 import com.korenko.CBlog.model.MessageEntity;
 import com.korenko.CBlog.repo.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -109,5 +109,30 @@ public class MessageService {
 
     public void deleteAllMessagesByUser(String username) {
         messageRepository.deleteAllMessagesByUser(username);
+    }
+
+    public void deleteAllMessagesBetweenUsers(String user1, String user2) {
+        List<MessageEntity> allMessages = messageRepository.findMessagesBetweenUsers(user1, user2);
+        allMessages.forEach(msg -> {
+            messageRepository.deleteById(msg.getId());
+        });
+    }
+
+    public Map<String, LastMessageDTO> getLastMessagesForUser(String currentUser) {
+        List<String> opponents = messageRepository.findOpponents(currentUser);
+        Map<String, LastMessageDTO> lastMessages = new HashMap<>();
+
+        opponents.forEach(opponent -> {
+            MessageEntity lastMsg = messageRepository.findLastMessageBetweenUsers(currentUser, opponent);
+            if (lastMsg != null) {
+                lastMessages.put(opponent,
+                        new LastMessageDTO(
+                                lastMsg.getSender(),
+                                lastMsg.getContent(),
+                                lastMsg.getTimestamp()
+                        ));
+            }
+        });
+        return lastMessages;
     }
 }

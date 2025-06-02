@@ -11,9 +11,9 @@ function getCurrentUser() {
 // открытие чата
 function openChat(userName, userImage, userId) {
 
-    const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
-    lastMessages[userId] = new Date().getTime();
-    localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
+    // const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
+    // lastMessages[userId] = new Date().getTime();
+    // localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
 
     const notificationDiv = document.getElementById('notification');
     notificationDiv.innerHTML = '';
@@ -106,6 +106,9 @@ function sendTypingNotification(isTyping, userId) {
 }
 
 function createNewDialog(userId, userName, userImage) {
+    const chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML = ` `;
+
     const usersList = document.getElementById('usersList');
     const newListItem = document.createElement('div');
     newListItem.className = 'listItem';
@@ -133,6 +136,10 @@ function createNewDialog(userId, userName, userImage) {
 function handleMessage() {
     const textarea = document.getElementById('message');
     const content = textarea.value.trim();
+
+    const lastMessages = JSON.parse(localStorage.getItem('lastMessages') || '{}');
+    lastMessages[getCurrentUser()] = new Date().getTime();
+    localStorage.setItem('lastMessages', JSON.stringify(lastMessages));
 
     //получение id получателя
     const savedChat = JSON.parse(localStorage.getItem('currentChat'));
