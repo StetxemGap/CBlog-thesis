@@ -11,6 +11,18 @@ function connect() {
 
         stompClient.send("/app/requestAllLastMessages", {}, getCurrentUser());
 
+        stompClient.subscribe("/user/queue/messageIsRead", function (message) {
+           const msg = JSON.parse(message.body);
+           updateMessageStatus(msg);
+        });
+
+        stompClient.subscribe("/user/queue/allMessagesIsRead", function (message) {
+            const msgIds = JSON.parse(message.body);
+            msgIds.forEach(id => {
+                updateMessageStatus(id);
+            });
+        });
+
         stompClient.subscribe('/user/queue/allLastMessages', function(message) {
             const lastMessages = JSON.parse(message.body);
 
@@ -59,7 +71,7 @@ function connect() {
 
         // подписка для получения сообщений в режиме реального времени
         stompClient.subscribe('/user/queue/newMessages', function(message) {
-            const msg = JSON.parse(message.body);
+            let msg = JSON.parse(message.body);
             const recipient = msg.recipient;
 
             const sender = msg.sender;
@@ -74,9 +86,16 @@ function connect() {
             updateLastMessageInList(otherUser, msg);
 
             if ((recipient === currentUser && 'opponentName ' + sender === opponent) || sender === currentUser) {
+                if (sender !== currentUser) {
+                    msg.isRead = true;
+                    stompClient.send("/app/msgStatus", {}, JSON.stringify({
+                        recipient: sender,
+                        msgId: msg.id,
+                        msgStatus: msg.isRead
+                    }));
+                }
                 displayMessages(msg);
             }
-
             resetUserList();
         });
 

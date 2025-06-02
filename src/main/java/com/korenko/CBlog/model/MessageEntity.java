@@ -26,4 +26,6 @@ public class MessageEntity {
     private Integer partNumber;
     @Column(nullable = false)
     private Boolean isFile;
+    @Column(nullable = false)
+    private Boolean isRead = false;
 }

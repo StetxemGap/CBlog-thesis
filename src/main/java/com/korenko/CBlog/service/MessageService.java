@@ -135,4 +135,14 @@ public class MessageService {
         });
         return lastMessages;
     }
+
+    public void messageIsRead(Integer msgId, Boolean isRead) {
+        messageRepository.updateMessageStatusById(msgId, isRead);
+    }
+
+    public List<Integer> markMessagesAsReadBetweenUsers(String user1, String user2) {
+        List<Integer> unreadMessages = messageRepository.findUnreadMessagesIdsBetweenUsers(user1, user2);
+        messageRepository.markMessagesAsRead(unreadMessages);
+        return unreadMessages;
+    }
 }

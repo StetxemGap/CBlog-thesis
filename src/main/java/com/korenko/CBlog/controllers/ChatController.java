@@ -216,4 +216,31 @@ public class ChatController {
     public Map<String, LastMessageDTO> getAllLastMessages(@Payload String currentUser) {
         return messageService.getLastMessagesForUser(currentUser);
     }
+
+    @MessageMapping("/msgStatus")
+    public void msgStatus(@Payload Map<String, Object> message) {
+        String recipient = (String) message.get("recipient");
+        Integer id = (Integer) message.get("msgId");
+        Boolean isRead = (Boolean) message.get("msgStatus");
+
+        messageService.messageIsRead(id, isRead);
+        messagingTemplate.convertAndSendToUser(
+                recipient,
+                "/queue/messageIsRead",
+                id
+        );
+    }
+
+    @MessageMapping("/allMessagesRead")
+    public void allMessagesRead(@Payload Map<String, Object> message) {
+        String sender = (String) message.get("sender");
+        String opponent = (String) message.get("opponent");
+        List<Integer> unreadIds = messageService.markMessagesAsReadBetweenUsers(sender, opponent);
+
+        messagingTemplate.convertAndSendToUser(
+                opponent,
+                "/queue/allMessagesIsRead",
+                unreadIds
+        );
+    }
 }

@@ -235,7 +235,8 @@ function displaySingleMessage(msg) {
     if (currentUser === msg.sender) {
         parentDiv.id=`parentMessages${msg.id}`;
         messageDiv.id=`message${msg.id}`;
-        messageMenu.className = 'messageMenu sender';
+        messageDiv.className = msg.isRead ? 'messages sender' : 'messages sender unchecked';
+        messageMenu.className ='messageMenu sender';
 
         messageMenu.innerHTML = `
               <div class="item change ${msg.id}" id="change"><img src="/img/change.png"></div>
@@ -314,6 +315,11 @@ function updateLastMessageInList(userId, message) {
             }
         }
     }
+}
+
+function updateMessageStatus(id) {
+    const msg = document.getElementById(`message${id}`);
+    msg.className = 'messages sender';
 }
 
 // форматированное время для сообщений

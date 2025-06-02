@@ -21,6 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const userName = listItem.querySelector('.userName').textContent;
             const userImage = listItem.querySelector('.userImage img').src;
 
+            stompClient.send("/app/allMessagesRead", {}, JSON.stringify({
+                sender: getCurrentUser(),
+                opponent: userId
+            }));
+
             saveChatState(userId, userName, userImage);
             openChat(userName, userImage, userId);
         }

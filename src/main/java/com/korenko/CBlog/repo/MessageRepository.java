@@ -55,5 +55,19 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Integer>
     MessageEntity findLastMessageBetweenUsers(
             @Param("user1") String user1,
             @Param("user2") String user2);
-}
 
+    @Modifying
+    @Query("UPDATE MessageEntity m SET m.isRead = :isRead WHERE m.id = :id")
+    int updateMessageStatusById(@Param("id") int id, @Param("isRead") Boolean isRead);
+
+    @Query("SELECT m.id FROM MessageEntity m WHERE " +
+            "(m.sender = :user2 AND m.recipient = :user1) " +
+            "AND m.isRead = false")
+    List<Integer> findUnreadMessagesIdsBetweenUsers(@Param("user1") String user1,
+                                                    @Param("user2") String user2);
+
+    @Modifying
+    @Query("UPDATE MessageEntity m SET m.isRead = true WHERE m.id IN :ids")
+    void markMessagesAsRead(@Param("ids") List<Integer> ids);
+}
+//"((m.sender = :user1 AND m.recipient = :user2) OR " +
