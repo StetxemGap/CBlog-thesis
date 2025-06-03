@@ -83,6 +83,7 @@ function getUserInfo() {
 
     const inputUsername = document.getElementById('inputUsername').value.trim();
     const inputPassword = document.getElementById('inputPassword').value.trim();
+    const inputEmail = document.getElementById('inputEmail').value.trim();
     const inputFirstname = document.getElementById('inputFirstname').value.trim();
     const inputLastname = document.getElementById('inputLastname').value.trim();
     const inputPosition = document.getElementById('inputPosition').value.trim();
@@ -111,6 +112,7 @@ function getUserInfo() {
             JSON.stringify({
                 username: inputUsername,
                 password: inputPassword,
+                email: inputEmail,
                 firstname: inputFirstname,
                 lastname: inputLastname,
                 position: inputPosition,

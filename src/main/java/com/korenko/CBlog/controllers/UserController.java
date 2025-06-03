@@ -22,19 +22,17 @@ public class UserController {
     @Autowired
     MessageService messageService;
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
     @MessageMapping("/addNewUser")
     public void addNewUser(@Payload Map<String, Object> userInfo) {
         String username = (String) userInfo.get("username");
         String password = (String) userInfo.get("password");
+        String email = (String) userInfo.get("email");
         String firstname = (String) userInfo.get("firstname");
         String lastname = (String) userInfo.get("lastname");
         String position = (String) userInfo.get("position");
         Boolean admin = (Boolean) userInfo.get("admin");
 
-        userDetailService.saveUserWithInfo(username, password, firstname, lastname, position, admin);
+        userDetailService.saveUserWithInfo(username, password, email, firstname, lastname, position, admin);
     }
 
     @MessageMapping("/deleteUser")

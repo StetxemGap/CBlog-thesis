@@ -3,7 +3,9 @@ package com.korenko.CBlog.service;
 import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.UserPrincipal;
 import com.korenko.CBlog.model.Users;
+import com.korenko.CBlog.model.UsersContact;
 import com.korenko.CBlog.model.UsersInfo;
+import com.korenko.CBlog.repo.UserContactRepo;
 import com.korenko.CBlog.repo.UserInfoRepo;
 import com.korenko.CBlog.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class MyUserDetailService implements UserDetailsService {
     @Lazy
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private UserContactRepo userContactRepo;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -71,6 +75,7 @@ public class MyUserDetailService implements UserDetailsService {
     }
 
     public void saveUserWithInfo(String username, String password,
+                                 String email,
                                  String firstname, String lastname,
                                  String position, Boolean admin) {
 
@@ -84,8 +89,14 @@ public class MyUserDetailService implements UserDetailsService {
         userInfo.setLastname(lastname);
         userInfo.setPosition(position);
 
+        UsersContact userContact = new UsersContact();
+        userContact.setEmail(email);
+
         user.setUsersInfo(userInfo);
         userInfo.setUser(user);
+
+        user.setUsersContact(userContact);
+        userContact.setUser(user);
 
         userRepo.save(user);
     }
