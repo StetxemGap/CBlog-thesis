@@ -13,11 +13,7 @@
 
     <body>
         <div th:fragment="navbar" class="navbar">
-            <form class="logout" th:action="@{/logout}" method="post">
-                <button class="logout" type="submit">
-                    <img th:src="@{/img/exit.png}" width=32px height=32px>
-                </button>
-            </form>
+
         </div>
 
         <div th:fragment="sidebar" class="sidebar" id="navigation">
@@ -44,6 +40,14 @@
                     Администратор
                 </a>
             </div>
+
+            <div class="emptyPlace"></div>
+
+            <form class="logout" th:action="@{/logout}" method="post">
+                <button class="logout" type="submit">
+                    <img th:src="@{/img/exit.png}" width=32px height=32px>
+                </button>
+            </form>
         </div>   
     </body>
 </html>

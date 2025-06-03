@@ -1,6 +1,7 @@
 package com.korenko.CBlog.DTO;
 
 import com.korenko.CBlog.model.Users;
+import com.korenko.CBlog.model.UsersContact;
 import com.korenko.CBlog.model.UsersInfo;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,11 +26,16 @@ public class UsersDto {
     private String photoPath;
     private Boolean activation;
     private Boolean admin;
+    private String phoneNumber;
+    private String email;
+    private String VKid;
+    private String TelegramUsername;
 
     public UsersDto(Users user) {
         this.username = user.getUsername();
 
         UsersInfo userInfo = user.getUsersInfo();
+        UsersContact usersContact = user.getUsersContact();
         this.firstName = userInfo.getFirstname();
         this.lastName = userInfo.getLastname();
         this.position = userInfo.getPosition();
@@ -42,6 +48,10 @@ public class UsersDto {
         this.photoPath = userInfo.getPhotoPath();
         this.activation = user.getActivation();
         this.admin = user.getIsAdmin();
+        this.phoneNumber = usersContact.getPhoneNumber();
+        this.email = usersContact.getEmail();
+        this.VKid = usersContact.getVKid();
+        this.TelegramUsername = usersContact.getTelegramUsername();
     }
 
     public UsersDto(UsersInfo user) {

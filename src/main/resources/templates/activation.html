@@ -13,13 +13,7 @@
 </head>
 <body>
     <div class="container">
-        <div th:replace="~{staticElement :: navbar}">
-
-        </div>
-
-        <div th:replace="~{staticElement :: sidebar}">
-
-        </div>
+        <div th:replace="~{staticElement :: sidebar}"></div>
 
         <form class="mainContentContainer" th:action="@{/activation}" method="post" enctype="multipart/form-data">
             <div class="mainInfo">
@@ -38,11 +32,11 @@
                     <input type="text" name="firstname" th:value="${usersInfo.firstname}" required>
                     <input type="text" name="lastname" th:value="${usersInfo.lastname}" required>
                     <input type="text" name="position" th:value="${usersInfo.position}" required>
-                    <input type="date" name="dob">
+                    <input type="date" name="dob" th:value="${usersInfo.dob != null} ? ${#temporals.format(usersInfo.dob, 'yyyy-MM-dd')} : ''">
                     <select name="gender">
-                        <option value="none">Не указано</option>
-                        <option value="male">Мужской</option>
-                        <option value="female">Женский</option>
+                        <option value="none" th:selected="${usersInfo.gender == 'Не указано'}">Не указано</option>
+                        <option value="male" th:selected="${usersInfo.gender == 'Мужской'}">Мужской</option>
+                        <option value="female" th:selected="${usersInfo.gender == 'Женский'}">Женский</option>
                     </select>
                 </div>
             </div>
@@ -58,20 +52,40 @@
                 </div>
 
                 <div class="dynamicData">
-                    <input type="text" name="city" required>
-                    <input type="text" name="street">
-                    <input type="text" name="officeFloor">
-                    <input type="text" name="officeNumber">
+                    <input type="text" name="city" th:value="${usersInfo.city}" required>
+                    <input type="text" name="street" th:value="${usersInfo.street}">
+                    <input type="text" name="officeFloor" th:value="${usersInfo.officeFloor}">
+                    <input type="text" name="officeNumber" th:value="${usersInfo.officeNumber}">
+                </div>
+            </div>
+
+            <div class="contactInfo">
+                <h3>Контактные данные</h3>
+
+                <div class="staticData">
+                    <p>Номер телефона</p>
+                    <p>Почта*</p>
+                    <p>ID ВК</p>
+                    <p>Имя пользователя Телеграм</p>
+                </div>
+
+                <div class="dynamicData">
+                    <input type="tel" name="phoneNumber" th:value="${usersContact.phoneNumber}">
+                    <input type="text" name="email" th:value="${usersContact.email}" required>
+                    <input type="text" name="VKid" th:value="${usersContact.VKid}">
+                    <input type="text" name="TelegramUsername" th:value="${usersContact.telegramUsername}">
                 </div>
             </div>
 
             <div class="avatar-upload">
                 <div class="avatar-edit">
-                    <input type="file" id="imageUpload" name="photo" accept="image/*" />
+                    <input type="file" id="imageUpload" name="photo" accept="image/*" th:value="${usersInfo.photoPath}"/>
                     <label for="imageUpload"></label>
                 </div>
                 <div class="avatar-preview">
-                    <div id="imagePreview"></div>
+                    <div id="imagePreview" th:style="${usersInfo.photoPath != null} ?
+                      'background-image: url(/uploads/' + ${usersInfo.photoPath} + ')' :
+                      'background-image: url(../img/user.png)'"></div>
                 </div>
             </div>
             <div class="confirm">

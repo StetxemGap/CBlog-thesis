@@ -15,18 +15,17 @@
     <body>
         <div class="container">
 
-            <div th:replace="~{staticElement :: navbar}">
+<!--            <div th:replace="~{staticElement :: navbar}"></div>-->
 
-            </div>
-
-            <div th:replace="~{staticElement :: sidebar}">
-
-            </div>
+            <div th:replace="~{staticElement :: sidebar}"></div>
 
             <div class="mainContentContainer">
                 <div id="currentUser" th:data-username="${currentUser.username}" style="display: none;"></div>
                 <div id="user" th:data-username="${profile.username}" style="display: none;"></div>
+
                     <div class="profileCard">
+                        <button th:if="${profile.username == currentUser.username}" onclick="goToActivation()" class="editProfile">
+                            <img src="/img/change.png"></button>
                         <div id="profileImage" class="profileImage">
                             <img th:if="${profile.photoPath != null}"
                             th:src="@{'/uploads/' + ${profile.photoPath}}">
@@ -85,6 +84,24 @@
 
                     <div class="feedback">
                         <h3>Связь со мной</h3>
+
+                        <div class="staticData">
+                            <p>Телефон</p>
+                            <p>Почта</p>
+                        </div>
+
+                        <div class="dynamicData">
+                            <p th:text="${!profile.phoneNumber.isEmpty()} ? ${profile.phoneNumber} : '------'"></p>
+
+                            <p th:text="${profile.email}"></p>
+                        </div>
+                            <a class="linkVK" th:if="${!profile.VKid.isEmpty()}" th:href="${profile.VKid}" target="_blank"><img th:src="@{/img/vk.png}"></a>
+
+                            <a class="linkTG" th:if="${!profile.telegramUsername.isEmpty()}" th:href="${profile.telegramUsername}" target="_blank"><img th:src="@{/img/telegram.png}"></a>
+
+                            <a class="linkVK inactive" th:unless="${!profile.VKid.isEmpty()}" target="_blank"><img th:src="@{/img/vk.png}"></a>
+
+                            <a class="linkTG inactive" th:unless="${!profile.telegramUsername.isEmpty()}" target="_blank"><img th:src="@{/img/telegram.png}"></a>
                     </div>
             </div>
         </div>
@@ -130,6 +147,10 @@
                         requestedUser: user
                     }));
             });
+        }
+
+        function goToActivation() {
+            window.location.href = /*[[@{/activation}]]*/ '/activation';
         }
     </script>
     </body>

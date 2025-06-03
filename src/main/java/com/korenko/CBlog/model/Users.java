@@ -24,6 +24,9 @@ public class Users implements Serializable {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UsersInfo usersInfo;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UsersContact usersContact;
+
     @Override
     public String toString() {
         return "Users{" +

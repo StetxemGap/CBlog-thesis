@@ -1,10 +1,11 @@
 .mainContentContainer {
     background-color: whitesmoke;
     display: grid;
-    grid-template-rows: repeat(4, auto);
+    grid-template-rows: repeat(5, auto);
     flex: 1;
     padding-top: 2%;
-    gap: 2%;
+    padding-bottom: 10%;
+    gap: 4%;
 
     font-family: 'Montserrat';
     justify-items: center;
@@ -22,10 +23,7 @@
 }
 
 .mainContentContainer p{
-    margin-bottom: 0;
-    margin-top: 0;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 0 20px;
     font-size: 18px;
     color: rgba(0, 0, 0, 0.808);
     overflow-wrap: break-word;
@@ -100,7 +98,7 @@ select:focus {
     border-radius: 10px;
     grid-row: 1;
     width: 800px;
-    padding-bottom: 3%;
+    padding-bottom: 4%;
 
     display: grid;
     grid-template-columns: auto auto;
@@ -114,7 +112,20 @@ select:focus {
     border-radius: 10px;
     grid-row: 2;
     width: 800px;
-    padding-bottom: 2%;
+    padding-bottom: 4%;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 90px auto;
+}
+
+.contactInfo {
+    box-shadow: 2px 2px 15px 1px rgba(0, 0, 0, 0.13);
+    background-color: white;
+    border-radius: 10px;
+    grid-row: 3;
+    width: 800px;
+    padding-bottom: 4%;
 
     display: grid;
     grid-template-columns: auto auto;
@@ -122,7 +133,7 @@ select:focus {
 }
 
 .confirm button{
-    grid-row: 4;
+    grid-row: 5;
     height: 50px;
     width: 150px;
     margin-bottom: 20px;
@@ -136,7 +147,7 @@ select:focus {
 }
 
 .confirm button::after {
-    content: 'Вход';
+    content: 'Подтвердить';
     position: absolute;
     top: 15px;
     left: 0;
@@ -168,6 +179,7 @@ select:focus {
     position: relative;
     max-width: 205px;
     margin: 0 auto;
+    grid-row: 4;
 }
 
 .avatar-edit {

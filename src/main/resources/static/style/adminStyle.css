@@ -1,6 +1,5 @@
 .mainContainer {
     background-color: whitesmoke;
-    grid-row: 2;
 
     display: grid;
     grid-template-columns: 10vh minmax(1100px, auto) 10vh;

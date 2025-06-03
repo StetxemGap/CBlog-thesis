@@ -1,7 +1,9 @@
 package com.korenko.CBlog.service;
 
 import com.korenko.CBlog.model.Users;
+import com.korenko.CBlog.model.UsersContact;
 import com.korenko.CBlog.model.UsersInfo;
+import com.korenko.CBlog.repo.UserContactRepo;
 import com.korenko.CBlog.repo.UserInfoRepo;
 import com.korenko.CBlog.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,12 @@ public class ActivationService {
     private UserInfoRepo userInfoRepo;
 
     @Autowired
+    private UserContactRepo userContactRepo;
+
+    @Autowired
     private FileStorageService fileStorageService;
 
-    public void activateUser(Integer userId, UsersInfo usersInfo, MultipartFile photoFile) {
+    public void activateUser(Integer userId, UsersInfo usersInfo, UsersContact usersContact, MultipartFile photoFile) {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setActivation(true);
@@ -47,5 +52,15 @@ public class ActivationService {
 
         existingInfo.setUser(user);
         userInfoRepo.save(existingInfo);
+
+        UsersContact newUsersContact = userContactRepo.findByUserId(userId)
+                .orElse(new UsersContact());
+
+        newUsersContact.setPhoneNumber(usersContact.getPhoneNumber());
+        newUsersContact.setEmail(usersContact.getEmail());
+        newUsersContact.setVKid(usersContact.getVKid());
+        newUsersContact.setTelegramUsername(usersContact.getTelegramUsername());
+        newUsersContact.setUser(user);
+        userContactRepo.save(newUsersContact);
     }
 }

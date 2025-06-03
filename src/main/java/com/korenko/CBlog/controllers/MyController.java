@@ -3,6 +3,7 @@ package com.korenko.CBlog.controllers;
 import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.UserPrincipal;
 import com.korenko.CBlog.model.Users;
+import com.korenko.CBlog.model.UsersContact;
 import com.korenko.CBlog.model.UsersInfo;
 import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MessageService;
@@ -76,9 +77,11 @@ public class MyController {
         String username = userPrincipal.getUsername();
         Users user = userDetailService.findByUsername(username);
         UsersInfo usersInfo = user.getUsersInfo() != null ? user.getUsersInfo() : new UsersInfo();
+        UsersContact usersContact = user.getUsersContact() != null ? user.getUsersContact() : new UsersContact();
 
         model.addAttribute("userId", user.getId());
         model.addAttribute("usersInfo", usersInfo);
+        model.addAttribute("usersContact", usersContact);
         return "activation";
     }
 
@@ -86,6 +89,7 @@ public class MyController {
     public String processActivation(
             @RequestParam Integer userId,
             @ModelAttribute UsersInfo usersInfo,
+            @ModelAttribute UsersContact usersContact,
             @RequestParam(value = "photo", required = false) MultipartFile photoFile) {
 
         if (usersInfo.getGender() != null) {
@@ -102,7 +106,26 @@ public class MyController {
             }
         }
 
-        activationService.activateUser(userId, usersInfo, photoFile);
+        String VK = usersContact.getVKid();
+        String telegram = usersContact.getTelegramUsername();
+
+        if (!VK.isEmpty()) {
+            if (!VK.contains("https://vk.com/")) {
+                usersContact.setVKid("https://vk.com/" + VK);
+            } else {
+                usersContact.setVKid(VK);
+            }
+        }
+
+        if (!telegram.isEmpty()) {
+            if (!telegram.contains("https://t.me/")) {
+                usersContact.setTelegramUsername("https://t.me/" + telegram);
+            } else {
+                usersContact.setTelegramUsername(telegram);
+            }
+        }
+
+        activationService.activateUser(userId, usersInfo, usersContact, photoFile);
         return "redirect:/profile";
     }
 
