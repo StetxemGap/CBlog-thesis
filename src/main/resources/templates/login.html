@@ -7,6 +7,8 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     </head>
 
     <body>
@@ -42,11 +44,129 @@
 
               <div class="confirmButton">
                   <button class="button" type="submit"></button>
-                  <div><a href="#">Забыли пароль?</a></div>
+                  <div><a href="#" id="forgotPasswordLink">Забыли пароль?</a></div>
               </div>
           </form>
 
         </div>
       </div>
+
+      <div id="forgotPasswordModal" class="modal">
+          <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Восстановление пароля</h2>
+              <p>Введите ваш Username</p>
+              <input id="recoveryUsername" placeholder="Ваш username" required>
+              <div class="linkContainer">
+                  <button id="sendRecovery">Отправить</button>
+                  <div><a href="#" id="forgotUsernameLink">Забыли username?</a></div>
+              </div>
+          </div>
+      </div>
+
+      <div id="forgotUsernameModal" class="modal">
+          <div class="modal-content">
+              <span class="close" id="closeModalEmail">&times;</span>
+              <h2>Восстановление пароля</h2>
+              <p>Введите ваш Email</p>
+              <input id="recoveryEmail" placeholder="Ваш email" required>
+              <div class="linkContainer">
+                  <button id="sendRecoveryEmail">Отправить</button>
+              </div>
+          </div>
+      </div>
+
+    <script>
+        let stompClient = null;
+        let isConnected = false;
+
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({},  () => {
+                isConnected = true;
+
+                stompClient.subscribe("/user/queue/userExist", function (message) {
+                    const msg = JSON.parse(message.body);
+                    if (msg) {
+                        const modal = document.getElementById("forgotPasswordModal");
+                        modal.style.display = "none";
+                        alert("Новый пароль будет отправлен на почту");
+                    } else {
+                        alert("Пользователь не существует");
+                    }
+                });
+
+                stompClient.subscribe("/user/queue/emailExist", function (message) {
+                    const msg = JSON.parse(message.body);
+                    if (msg) {
+                        const modal = document.getElementById("forgotUsernameModal");
+                        modal.style.display = "none";
+                        alert("Новый пароль будет отправлен на почту");
+                    } else {
+                        alert("Пользователя с указанной почтой не существует");
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            connect();
+
+            const modal = document.getElementById("forgotPasswordModal");
+            const btn = document.querySelector(".confirmButton a");
+            const span = document.getElementsByClassName("close")[0];
+            const sendBtn = document.getElementById("sendRecovery");
+            const sendEmailBtn = document.getElementById("sendRecoveryEmail");
+            const forgotUsername = document.getElementById("forgotUsernameLink");
+            const modalEmail = document.getElementById("forgotUsernameModal");
+            const closeModalEmail = document.getElementById("closeModalEmail");
+
+            btn.onclick = function(e) {
+                e.preventDefault();
+                modal.style.display = "block";
+            }
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            closeModalEmail.onclick = function () {
+                modalEmail.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                } else if (event.target == modalEmail) {
+                    modalEmail.style.display = "none";
+                }
+            }
+
+            forgotUsername.addEventListener('click', function () {
+                modal.style.display = "none";
+                modalEmail.style.display = "block";
+            });
+
+            sendEmailBtn.onclick = function() {
+                const email = document.getElementById("recoveryEmail").value;
+                if (email) {
+                    stompClient.send("/app/requestEmailExist", {}, email);
+                } else {
+                    alert("Пожалуйста, введите ваш email");
+                }
+            }
+
+            sendBtn.onclick = function() {
+                const username = document.getElementById("recoveryUsername").value;
+                if (username) {
+                    stompClient.send("/app/requestUserExist", {}, username);
+                } else {
+                    alert("Пожалуйста, введите ваш username");
+                }
+            }
+        });
+    </script>
     </body>
 </html>

@@ -111,4 +111,8 @@ public class MyUserDetailService implements UserDetailsService {
         UsersInfo user = userInfoRepo.findByUserId(tmp.getId()).orElse(new UsersInfo());
         userInfoRepo.delete(user);
     }
+
+    public UsersContact findByEmail(String email) {
+        return userContactRepo.findByEmail(email);
+    }
 }

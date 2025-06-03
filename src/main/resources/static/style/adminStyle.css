@@ -189,3 +189,27 @@ input:focus {
     font-size: 15px;
 }
 
+
+.passwords {
+    grid-template-columns: repeat(5, auto);
+    min-height: 50px;
+    align-items: center;
+    justify-items: center;
+}
+
+.Password {
+    display: block;
+}
+
+.CreateNewPassword {
+    align-self: center;
+    justify-self: center;
+    grid-template-rows: repeat(2, auto);
+    border: rgba(128, 128, 128, 0.2) solid 1px;
+    border-radius: 10px;
+    padding: 5%;
+}
+
+.CreateNewPassword input{
+    margin-left: 2%;
+}

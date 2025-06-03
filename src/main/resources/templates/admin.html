@@ -87,8 +87,22 @@
             <div class="mainView" id="mainViewPassword" style="display: none;">
                 <div class="viewHeader">Запросы на пароль</div>
 
-                <div class="view Password">
+                <div class="view Password" id="viewPassword">
+                    <div class="listItem passwords" th:each="passordRequest : ${passwordRequests}"
+                         th:id="'listItem-password-' + ${passordRequest.username} + '-' + ${passordRequest.id.toString()}"
+                         th:email="${passordRequest.email}">
+                        <p class="id" th:text="${passordRequest.id}"></p>
+                        <p class="userName" th:text="${passordRequest.username}"></p>
+                        <p class="email" th:text="${passordRequest.email}"></p>
 
+                        <button class="userAction accept" id="acceptButton" th:request-id="${passordRequest.id}">
+                            <img src="/img/ok.png" height="28" width="28">
+                        </button>
+                        <button class="userAction cancel" id="cancelButton" th:data-username="${passordRequest.username}"
+                                th:request-id="${passordRequest.id}">
+                            <img src="/img/close.png" height="32" width="32">
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -122,6 +136,22 @@
                     <input class="userData AdminRole" id="inputAdminRole" type="checkbox">
 
                     <button class="submitNewUser" id="submitNewUser" type="submit">
+                        <img src="/img/ok.png">
+                    </button>
+                </form>
+            </div>
+
+            <div class="mainView" id="mainViewNewPassword" style="display: none">
+                <div class="viewHeader">Новый пароль</div>
+
+                <form class="view CreateNewPassword">
+                    <p class="label ForPassword">Пароль</p>
+                    <input class="userData Password" id="inputNewPassword" type="text"
+                           required minlength="5"
+                           oninvalid="this.setCustomValidity('Заполните это поле (минимум 5 символов)')"
+                           oninput="this.setCustomValidity('')">
+
+                    <button class="submitNewUser" id="submitNewPassword" type="submit">
                         <img src="/img/ok.png">
                     </button>
                 </form>

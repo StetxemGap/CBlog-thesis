@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainViewHR = document.getElementById('mainViewHR');
     const mainViewPassword = document.getElementById('mainViewPassword')
     const mainViewCreateUser = document.getElementById('mainViewCreateUser');
+    const mainViewNewPassword = document.getElementById('mainViewNewPassword');
 
     usersButton.addEventListener('click', () => switchView(mainViewUsers));
     hrButton.addEventListener('click',() => switchView(mainViewHR));
@@ -75,6 +76,39 @@ document.addEventListener('DOMContentLoaded', function() {
             const button = e.target.closest('.deleteUser');
             const username = button.dataset.username;
             deleteUser(username);
+        }
+    });
+
+    const acceptButton = document.getElementById('acceptButton');
+
+    acceptButton.addEventListener('click', function (){
+        switchView(mainViewNewPassword);
+
+        const id = +acceptButton.getAttribute('request-id');
+
+        submitNewPassword.addEventListener('click', function () {
+            const inputPassword = document.getElementById('inputNewPassword').value.trim();
+            if (inputPassword.length > 4) {
+                stompClient.send("/app/changePassword", {}, JSON.stringify({
+                    id: id,
+                    password: inputPassword
+                }))
+            }
+        });
+    });
+
+    const submitNewPassword = document.getElementById('submitNewPassword');
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.cancel')) {
+            const button = e.target.closest('.cancel');
+            const username = button.getAttribute('data-username');
+            const id = button.getAttribute('request-id');
+            const viewPassword  = document.getElementById('viewPassword');
+            const listItem = document.getElementById(`listItem-password-${username}-${id}`);
+            const email = listItem.getAttribute('email');
+            viewPassword.removeChild(listItem);
+            stompClient.send("/app/cancelRequest", {}, id);
         }
     });
 });

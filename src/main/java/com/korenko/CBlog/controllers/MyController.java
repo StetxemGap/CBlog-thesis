@@ -1,10 +1,8 @@
 package com.korenko.CBlog.controllers;
 
 import com.korenko.CBlog.DTO.UsersDto;
-import com.korenko.CBlog.model.UserPrincipal;
-import com.korenko.CBlog.model.Users;
-import com.korenko.CBlog.model.UsersContact;
-import com.korenko.CBlog.model.UsersInfo;
+import com.korenko.CBlog.model.*;
+import com.korenko.CBlog.repo.PasswordRequestsRepo;
 import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MessageService;
 import com.korenko.CBlog.service.MyUserDetailService;
@@ -29,6 +27,9 @@ public class MyController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private PasswordRequestsRepo passwordRequestsRepo;
 
     @GetMapping("/login")
     public String auth(Model model) {
@@ -202,8 +203,9 @@ public class MyController {
                 .sorted(Comparator.comparing(UsersDto::getId))
                 .collect(Collectors.toList());
         model.addAttribute("usersAll", sortedUsers);
-        ;
 
+        List<PasswordRequests> passwordRequests = passwordRequestsRepo.findAll();
+        model.addAttribute("passwordRequests", passwordRequests);
 
         return "admin";
     }
