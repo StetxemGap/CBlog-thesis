@@ -1,13 +1,8 @@
 package com.korenko.CBlog.controllers;
 
 import com.korenko.CBlog.DTO.UsersDto;
-import com.korenko.CBlog.model.PasswordRequests;
-import com.korenko.CBlog.model.Users;
-import com.korenko.CBlog.model.UsersContact;
-import com.korenko.CBlog.model.UsersInfo;
-import com.korenko.CBlog.repo.PasswordRequestsRepo;
-import com.korenko.CBlog.repo.UserContactRepo;
-import com.korenko.CBlog.repo.UserRepo;
+import com.korenko.CBlog.model.*;
+import com.korenko.CBlog.repo.*;
 import com.korenko.CBlog.service.EmailService;
 import com.korenko.CBlog.service.MessageService;
 import com.korenko.CBlog.service.MyUserDetailService;
@@ -22,7 +17,10 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -44,7 +42,13 @@ public class UserController {
     private UserRepo userRepo;
 
     @Autowired
+    private UserInfoRepo userInfoRepo;
+
+    @Autowired
     EmailService emailService;
+
+    @Autowired
+    HRRequestsRepo hrRequestsRepo;
 
     @MessageMapping("/addNewUser")
     public void addNewUser(@Payload Map<String, Object> userInfo) {
@@ -54,14 +58,16 @@ public class UserController {
         String firstname = (String) userInfo.get("firstname");
         String lastname = (String) userInfo.get("lastname");
         String position = (String) userInfo.get("position");
+        String hiringDateString = (String) userInfo.get("hiringDate");
         Boolean admin = (Boolean) userInfo.get("admin");
 
-        userDetailService.saveUserWithInfo(username, password, email, firstname, lastname, position, admin);
+        LocalDate hiringDate = LocalDate.parse(hiringDateString, DateTimeFormatter.ISO_LOCAL_DATE);
+
+        userDetailService.saveUserWithInfo(username, password, email, firstname, lastname, position, hiringDate, admin);
     }
 
     @MessageMapping("/deleteUser")
     public void deleteUser(@Payload String username) {
-        userDetailService.deleteUserInfoById(username);
         userDetailService.deleteUserById(username);
         messageService.deleteAllMessagesByUser(username);
     }
@@ -117,5 +123,74 @@ public class UserController {
         PasswordRequests passwordRequests = passwordRequestsRepo.findById(id).orElse(new PasswordRequests());
         emailService.sendCancelRequest(passwordRequests.getEmail());
         passwordRequestsRepo.deleteById(id);
+    }
+
+    @MessageMapping("/createNewUserRequest")
+    @SendToUser("/queue/actionRequest")
+    public String createNewUserRequest(@Payload Map<String, Object> userInfo) {
+        String firstname = (String) userInfo.get("firstName");
+        String lastname = (String) userInfo.get("lastName");
+        String position = (String) userInfo.get("position");
+        String hiringDateString = (String) userInfo.get("hiringDate");
+        LocalDate hiringDate = LocalDate.parse(hiringDateString, DateTimeFormatter.ISO_LOCAL_DATE);
+
+        Boolean isExist = userDetailService.existsByFourParameters(firstname, lastname, position, hiringDate);
+        if (isExist) {
+            return "Данный сотрудник уже существует";
+        } else {
+            HRRequests request = new HRRequests();
+            request.setFirstname(firstname);
+            request.setLastname(lastname);
+            request.setPosition(position);
+            request.setHiringDate(hiringDate);
+            request.setIsDelete(false);
+            hrRequestsRepo.save(request);
+            return "Запрос успешно создан";
+        }
+    }
+
+    @MessageMapping("/deleteUserRequest")
+    @SendToUser("/queue/actionRequest")
+    public String createDeleteUserRequest(@Payload Map<String, Object> userInfo) {
+        String firstname = (String) userInfo.get("firstName");
+        String lastname = (String) userInfo.get("lastName");
+        String position = (String) userInfo.get("position");
+        String hiringDateString = (String) userInfo.get("hiringDate");
+        LocalDate hiringDate = LocalDate.parse(hiringDateString, DateTimeFormatter.ISO_LOCAL_DATE);
+
+        Boolean isExist = userDetailService.existsByFourParameters(firstname, lastname, position, hiringDate);
+        if (isExist) {
+            HRRequests request = new HRRequests();
+            request.setFirstname(firstname);
+            request.setLastname(lastname);
+            request.setPosition(position);
+            request.setHiringDate(hiringDate);
+            request.setIsDelete(true);
+            hrRequestsRepo.save(request);
+            return "Запрос успешно создан";
+        } else {
+            return "Такого сотрудника не существует";
+        }
+    }
+
+    @MessageMapping("/cancelHRRequest")
+    public void cancelHRRequest(@Payload Integer id) {
+        hrRequestsRepo.deleteById(id);
+    }
+
+    @MessageMapping("/acceptDeleteRequest")
+    public void deleteHRRequest(@Payload Map<String, Object> userInfo) {
+        String firstname = (String) userInfo.get("firstname");
+        String lastname = (String) userInfo.get("lastname");
+        String position = (String) userInfo.get("position");
+        String hiringDateString = (String) userInfo.get("hiringDate");
+        LocalDate hiringDate = LocalDate.parse(hiringDateString, DateTimeFormatter.ISO_LOCAL_DATE);
+
+        Optional<UsersInfo> user = userInfoRepo.findUserByFourParameters(firstname, lastname, position, hiringDate);
+
+        if (user.isPresent()) {
+            Users deletedUser = user.get().getUser();
+            userDetailService.deleteUserById(deletedUser.getUsername());
+        }
     }
 }

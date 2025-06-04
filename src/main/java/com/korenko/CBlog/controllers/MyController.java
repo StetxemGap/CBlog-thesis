@@ -2,6 +2,7 @@ package com.korenko.CBlog.controllers;
 
 import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.*;
+import com.korenko.CBlog.repo.HRRequestsRepo;
 import com.korenko.CBlog.repo.PasswordRequestsRepo;
 import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MessageService;
@@ -30,6 +31,9 @@ public class MyController {
 
     @Autowired
     private PasswordRequestsRepo passwordRequestsRepo;
+
+    @Autowired
+    private HRRequestsRepo hrRequestsRepo;
 
     @GetMapping("/login")
     public String auth(Model model) {
@@ -207,6 +211,14 @@ public class MyController {
         List<PasswordRequests> passwordRequests = passwordRequestsRepo.findAll();
         model.addAttribute("passwordRequests", passwordRequests);
 
+        List<HRRequests> hrRequests = hrRequestsRepo.findAll();
+        model.addAttribute("hrRequests", hrRequests);
+
         return "admin";
+    }
+
+    @GetMapping("/HR")
+    public String HR() {
+        return "HR";
     }
 }

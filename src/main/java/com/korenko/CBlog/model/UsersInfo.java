@@ -27,6 +27,7 @@ public class UsersInfo implements Serializable {
     private String officeFloor;
     private String officeNumber;
     private String photoPath;
+    private LocalDate hiringDate;
 
     @OneToOne
     @JoinColumn(name = "user_id")

@@ -78,8 +78,49 @@
             <div class="mainView" id="mainViewHR" style="display: none;">
                 <div class="viewHeader">Запросы от HR</div>
 
-                <div class="view HR">
+                <div class="view HR" id="viewHR">
+                    <div class="radioButtonsContainer">
+                        <button class="checked" id="createUserRequests">Создание</button>
+                        <button class="unchecked" id="deleteUserRequests">Удаление</button>
+                    </div>
 
+                    <div class="itemsContainer" id="createUserItems" style="display: block;">
+                        <div class="listItem HRRequest" th:each="hrRequest : ${hrRequests}"
+                             th:if="${!hrRequest.isDelete}"
+                             th:id="'listItem-request-' + ${hrRequest.id}">
+                            <p class="id" id="requestId" th:data="${hrRequest.id}" th:text="${hrRequest.id}"></p>
+                            <p class="firstname" id="requestFirstname" th:data="${hrRequest.firstname}" th:text="${hrRequest.firstname}"></p>
+                            <p class="lastname" id="requestLastname" th:data="${hrRequest.lastname}" th:text="${hrRequest.lastname}"></p>
+                            <p class="position" id="requestPosition" th:data="${hrRequest.position}" th:text="${hrRequest.position}"></p>
+                            <p class="hiringDate" id="requestHiringDate" th:data="${hrRequest.hiringDate}" th:text="${hrRequest.hiringDate}"></p>
+
+                            <button class="userAction acceptCreateRequest" id="acceptCreateButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/ok.png" height="28px" width="28px">
+                            </button>
+                            <button class="userAction cancelCreateRequest" id="cancelCreateButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/close.png" height="25px" width="25px">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="itemsContainer" id="deleteUserItems" style="display: none;">
+                        <div class="listItem HRRequest" th:each="hrRequest : ${hrRequests}"
+                             th:if="${hrRequest.isDelete}"
+                             th:id="'listItem-request-' + ${hrRequest.id}">
+                            <p class="id" id="deleteRequestId" th:data="${hrRequest.id}" th:text="${hrRequest.id}"></p>
+                            <p class="firstname" id="deleteRequestFirstname" th:data="${hrRequest.firstname}" th:text="${hrRequest.firstname}"></p>
+                            <p class="lastname" id="deleteRequestLastname" th:data="${hrRequest.lastname}" th:text="${hrRequest.lastname}"></p>
+                            <p class="position" id="deleteRequestPosition" th:data="${hrRequest.position}" th:text="${hrRequest.position}"></p>
+                            <p class="hiringDate" id="deleteRequestHiringDate" th:data="${hrRequest.hiringDate}" th:text="${hrRequest.hiringDate}"></p>
+
+                            <button class="userAction acceptDeleteRequest" id="acceptDeleteButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/ok.png" height="28px" width="28px">
+                            </button>
+                            <button class="userAction cancelDeleteRequest" id="cancelDeleteButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/close.png" height="25px" width="25px">
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -96,11 +137,11 @@
                         <p class="email" th:text="${passordRequest.email}"></p>
 
                         <button class="userAction accept" id="acceptButton" th:request-id="${passordRequest.id}">
-                            <img src="/img/ok.png" height="28" width="28">
+                            <img src="/img/ok.png" height="28px" width="28px">
                         </button>
                         <button class="userAction cancel" id="cancelButton" th:data-username="${passordRequest.username}"
                                 th:request-id="${passordRequest.id}">
-                            <img src="/img/close.png" height="32" width="32">
+                            <img src="/img/close.png" height="25px" width="25px">
                         </button>
                     </div>
                 </div>
@@ -111,6 +152,8 @@
                 <div class="viewHeader">Создание пользователя</div>
 
                 <form class="view CreateUser">
+                    <input class="userData Email" id="inputRequestId" type="text" style="display: none;">
+
                     <p class="label ForUsername">Юзернейм</p>
                     <input class="userData Username" id="inputUsername" type="text" required>
 
@@ -131,6 +174,9 @@
 
                     <p class="label ForPosition">Должность</p>
                     <input class="userData Position" id="inputPosition" type="text" required>
+
+                    <p class="label ForHiringDate">Дата найма</p>
+                    <input class="userData HiringDate" id="inputHiringDate" type="date" required>
 
                     <p class="label ForAdminRole">Права администратора</p>
                     <input class="userData AdminRole" id="inputAdminRole" type="checkbox">

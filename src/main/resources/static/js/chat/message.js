@@ -251,6 +251,7 @@ function displaySingleMessage(msg) {
     messageDiv.innerHTML = `
              <p class="messagesText">${msg.content}</p>
              <p class="messagesTime">${formatTime(msg.timestamp)}</p>
+             <span class="cool-tooltip-text">${formatDate(msg.timestamp)}</span>
         `;
 
     parentDiv.appendChild(messageDiv);
@@ -291,11 +292,13 @@ function displaySingleMessage(msg) {
                         changeMessage.innerHTML = `
                             <p class="messagesText">${content}</p>
                              <p class="messagesTime">${formatTime(msg.timestamp)}</p>
+                             <span class="cool-tooltip-text">${formatDate(msg.timestamp)}</span>
                         `;
                     } else {
                         changeMessage.innerHTML = `
                             <p class="messagesText">${msg.content}</p>
-                             <p class="messagesTime">${formatTime(msg.timestamp)}</p>
+                             <p class="messagesTime" title="Подсказка">${formatTime(msg.timestamp)}</p>
+                             <span class="cool-tooltip-text">${formatDate(msg.timestamp)}</span>
                         `;
                     }
                 }
@@ -335,4 +338,9 @@ function updateMessageStatus(id) {
 function formatTime(timestamp) {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+}
+
+function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString([], {year: '2-digit', month:'2-digit', day:'2-digit'})
 }

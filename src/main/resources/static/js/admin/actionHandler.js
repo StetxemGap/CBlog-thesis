@@ -79,22 +79,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    const acceptButton = document.getElementById('acceptButton');
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.accept')) {
+            switchView(mainViewNewPassword);
+            const button = e.target.closest('.accept');
+            const id = +button.getAttribute('request-id');
 
-    acceptButton.addEventListener('click', function (){
-        switchView(mainViewNewPassword);
-
-        const id = +acceptButton.getAttribute('request-id');
-
-        submitNewPassword.addEventListener('click', function () {
-            const inputPassword = document.getElementById('inputNewPassword').value.trim();
-            if (inputPassword.length > 4) {
-                stompClient.send("/app/changePassword", {}, JSON.stringify({
-                    id: id,
-                    password: inputPassword
-                }))
-            }
-        });
+            submitNewPassword.addEventListener('click', function () {
+                const inputPassword = document.getElementById('inputNewPassword').value.trim();
+                if (inputPassword.length > 4) {
+                    stompClient.send("/app/changePassword", {}, JSON.stringify({
+                        id: id,
+                        password: inputPassword
+                    }))
+                }
+            });
+        }
     });
 
     const submitNewPassword = document.getElementById('submitNewPassword');
@@ -106,21 +106,106 @@ document.addEventListener('DOMContentLoaded', function() {
             const id = button.getAttribute('request-id');
             const viewPassword  = document.getElementById('viewPassword');
             const listItem = document.getElementById(`listItem-password-${username}-${id}`);
-            const email = listItem.getAttribute('email');
             viewPassword.removeChild(listItem);
             stompClient.send("/app/cancelRequest", {}, id);
+        }
+    });
+
+    const createUserRequests = document.getElementById('createUserRequests');
+    const deleteUserRequests = document.getElementById('deleteUserRequests');
+    const createUserItems = document.getElementById('createUserItems');
+    const deleteUserItems = document.getElementById('deleteUserItems');
+
+
+    createUserRequests.addEventListener('click', function () {
+        createUserRequests.className = 'checked';
+        deleteUserRequests.className = 'unchecked';
+
+        createUserItems.style.display = "block";
+        deleteUserItems.style.display = "none";
+    });
+
+    deleteUserRequests.addEventListener('click', function () {
+        createUserRequests.className = 'unchecked';
+        deleteUserRequests.className = 'checked';
+
+        createUserItems.style.display = "none";
+        deleteUserItems.style.display = "block";
+    });
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.cancelCreateRequest')) {
+            const button = e.target.closest('.cancelCreateRequest');
+            const id = button.getAttribute('request-id');
+            const createUserItems  = document.getElementById('createUserItems');
+            const listItem = document.getElementById(`listItem-request-${id}`);
+            createUserItems.removeChild(listItem);
+            stompClient.send("/app/cancelHRRequest", {}, id);
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.cancelDeleteRequest')) {
+            const button = e.target.closest('.cancelDeleteRequest');
+            const id = button.getAttribute('request-id');
+            const deleteUserItems  = document.getElementById('deleteUserItems');
+            const listItem = document.getElementById(`listItem-request-${id}`);
+            deleteUserItems.removeChild(listItem);
+            stompClient.send("/app/cancelHRRequest", {}, id);
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.acceptCreateRequest')) {
+            const id = document.getElementById('requestId').getAttribute('data');
+            const firstname = document.getElementById('requestFirstname').getAttribute('data');
+            const lastname = document.getElementById('requestLastname').getAttribute('data');
+            const position = document.getElementById('requestPosition').getAttribute('data');
+            const hiringDate = document.getElementById('requestHiringDate').getAttribute('data');
+
+            document.getElementById('inputRequestId').value = id;
+            document.getElementById('inputFirstname').value = firstname;
+            document.getElementById('inputLastname').value = lastname;
+            document.getElementById('inputPosition').value = position;
+            document.getElementById('inputHiringDate').value = hiringDate;
+
+            switchView(mainViewCreateUser);
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.acceptDeleteRequest')) {
+            const id = document.getElementById('deleteRequestId').getAttribute('data');
+            const firstname = document.getElementById('deleteRequestFirstname').getAttribute('data');
+            const lastname = document.getElementById('deleteRequestLastname').getAttribute('data');
+            const position = document.getElementById('deleteRequestPosition').getAttribute('data');
+            const hiringDate = document.getElementById('deleteRequestHiringDate').getAttribute('data');
+
+            const deleteUserItems  = document.getElementById('deleteUserItems');
+            const listItem = document.getElementById(`listItem-request-${id}`);
+            deleteUserItems.removeChild(listItem);
+
+            stompClient.send("/app/acceptDeleteRequest", {}, JSON.stringify({
+                firstname: firstname,
+                lastname: lastname,
+                position: position,
+                hiringDate: hiringDate
+            }));
+            stompClient.send("/app/cancelHRRequest", {}, id);
         }
     });
 });
 
 function getUserInfo() {
 
+    const inputRequestId = document.getElementById('inputRequestId').value.trim();
     const inputUsername = document.getElementById('inputUsername').value.trim();
     const inputPassword = document.getElementById('inputPassword').value.trim();
     const inputEmail = document.getElementById('inputEmail').value.trim();
     const inputFirstname = document.getElementById('inputFirstname').value.trim();
     const inputLastname = document.getElementById('inputLastname').value.trim();
     const inputPosition = document.getElementById('inputPosition').value.trim();
+    const inputHiringDate = document.getElementById('inputHiringDate').value.trim();
     const inputAdminRole = document.getElementById('inputAdminRole').checked;
 
     const inputElement = document.getElementById('inputUsername');
@@ -138,7 +223,7 @@ function getUserInfo() {
         });
     } else if (inputUsername && inputPassword &&
         inputFirstname && inputLastname &&
-        inputPosition) {
+        inputPosition && inputHiringDate) {
         inputElement.setCustomValidity('');
         inputElement.reportValidity();
         console.log(inputFirstname);
@@ -150,8 +235,24 @@ function getUserInfo() {
                 firstname: inputFirstname,
                 lastname: inputLastname,
                 position: inputPosition,
+                hiringDate: inputHiringDate,
                 admin: inputAdminRole
             }));
+        if(inputRequestId) {
+            stompClient.send("/app/cancelHRRequest", {}, inputRequestId);
+            document.getElementById('inputRequestId').value = '';
+            const createUserItems  = document.getElementById('createUserItems');
+            const listItem = document.getElementById(`listItem-request-${inputRequestId}`);
+            createUserItems.removeChild(listItem);
+        }
+        document.getElementById('inputUsername').value = '';
+        document.getElementById('inputPassword').value = '';
+        document.getElementById('inputEmail').value = '';
+        document.getElementById('inputFirstname').value = '';
+        document.getElementById('inputLastname').value = '';
+        document.getElementById('inputPosition').value = '';
+        document.getElementById('inputHiringDate').value = '';
+        switchView(document.getElementById('mainViewUsers'));
     }
 }
 

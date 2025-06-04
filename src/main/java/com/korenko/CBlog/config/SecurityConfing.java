@@ -2,6 +2,8 @@ package com.korenko.CBlog.config;
 
 import com.korenko.CBlog.model.Users;
 import com.korenko.CBlog.repo.UserRepo;
+import com.korenko.CBlog.service.IpAddressMatcher;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,15 +11,21 @@ import org.springframework.http.HttpMethod;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 @Configuration
 public class SecurityConfing {
@@ -31,6 +39,7 @@ public class SecurityConfing {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        Set<String> allowedSubnets = Set.of("192.168.1.0/24");
         http
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -38,6 +47,11 @@ public class SecurityConfing {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "style/**.css", "img/**.jpg", "img/**.png", "/uploads/**", "/ws/**").permitAll()
+                        .requestMatchers("/HR", "js/HR/**.js").access((authz, context) -> {
+                            String clientIp = context.getRequest().getRemoteAddr();
+                            boolean ipAllowed = new IpAddressMatcher(Set.of("192.168.0.0/24", "127.0.0.1/24")).matches(context.getRequest());
+                            return new AuthorizationDecision(authz.get().isAuthenticated() && ipAllowed);
+                        })
                         .requestMatchers(HttpMethod.POST, "/activation").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/upload").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")

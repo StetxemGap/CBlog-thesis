@@ -164,7 +164,7 @@ input:focus {
 .CreateUser {
     display: grid;
     grid-template-columns: repeat(2, auto);
-    grid-template-rows: repeat(8, auto);
+    grid-template-rows: repeat(9, auto);
     justify-self: center;
     align-content: center;
     gap: 5%;
@@ -175,7 +175,7 @@ input:focus {
 
 .submitNewUser {
     grid-column: 1 / 3;
-    grid-row: 8;
+    grid-row: 9;
     border: rgba(128, 128, 128, 0.2) solid 1px;
     border-radius: 10px;
 }
@@ -212,4 +212,41 @@ input:focus {
 
 .CreateNewPassword input{
     margin-left: 2%;
+}
+
+.HR {
+    grid-template-rows: 50px auto;
+}
+
+.radioButtonsContainer {
+    grid-row: 1;
+
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+}
+
+.itemsContainer {
+    grid-row: 2;
+}
+
+.radioButtonsContainer button{
+    align-self: stretch;
+    justify-self: stretch;
+    margin: 1%;
+
+    border: rgba(128, 128, 128, 0.2) solid 1px;
+    border-radius: 10px;
+
+    font-family: 'Montserrat';
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.808);
+
+}
+
+.unchecked {
+    background-color: transparent;
+}
+
+.checked {
+    background-color: whitesmoke;
 }

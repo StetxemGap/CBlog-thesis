@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -77,7 +78,7 @@ public class MyUserDetailService implements UserDetailsService {
     public void saveUserWithInfo(String username, String password,
                                  String email,
                                  String firstname, String lastname,
-                                 String position, Boolean admin) {
+                                 String position, LocalDate hiringDate, Boolean admin) {
 
         Users user = new Users();
         user.setUsername(username);
@@ -88,6 +89,7 @@ public class MyUserDetailService implements UserDetailsService {
         userInfo.setFirstname(firstname);
         userInfo.setLastname(lastname);
         userInfo.setPosition(position);
+        userInfo.setHiringDate(hiringDate);
 
         UsersContact userContact = new UsersContact();
         userContact.setEmail(email);
@@ -106,13 +108,11 @@ public class MyUserDetailService implements UserDetailsService {
         userRepo.delete(user);
     }
 
-    public void deleteUserInfoById(String username) {
-        Users tmp = userRepo.findByUsername(username);
-        UsersInfo user = userInfoRepo.findByUserId(tmp.getId()).orElse(new UsersInfo());
-        userInfoRepo.delete(user);
-    }
-
     public UsersContact findByEmail(String email) {
         return userContactRepo.findByEmail(email);
+    }
+
+    public Boolean existsByFourParameters(String firstname, String lastname, String position, LocalDate hiringDate) {
+        return userInfoRepo.existsByFourParameters(firstname, lastname, position, hiringDate);
     }
 }
