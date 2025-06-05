@@ -1,4 +1,7 @@
 package com.korenko.CBlog.repo;
 
-public interface diaryCardsRepo {
+import com.korenko.CBlog.model.DiaryCards;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DiaryCardsRepo extends JpaRepository<DiaryCards, Integer> {
 }

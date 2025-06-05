@@ -2,8 +2,7 @@ package com.korenko.CBlog.controllers;
 
 import com.korenko.CBlog.DTO.UsersDto;
 import com.korenko.CBlog.model.*;
-import com.korenko.CBlog.repo.HRRequestsRepo;
-import com.korenko.CBlog.repo.PasswordRequestsRepo;
+import com.korenko.CBlog.repo.*;
 import com.korenko.CBlog.service.ActivationService;
 import com.korenko.CBlog.service.MessageService;
 import com.korenko.CBlog.service.MyUserDetailService;
@@ -215,6 +214,22 @@ public class MyController {
         model.addAttribute("hrRequests", hrRequests);
 
         return "admin";
+    }
+
+    @GetMapping("/diary")
+    public String diary(Model model, Principal principal) {
+        Users currentUser = userDetailService.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currentUser);
+
+        List<DiaryCards> cards = currentUser.getDiaryCards();
+        List<DiaryParagraphs> paragraphs = cards.stream()
+                .flatMap(card -> card.getDiaryParagraphs().stream())
+                .toList();
+
+        model.addAttribute("cards", cards);
+        model.addAttribute("paragraphs", paragraphs);
+
+        return "diary";
     }
 
     @GetMapping("/HR")

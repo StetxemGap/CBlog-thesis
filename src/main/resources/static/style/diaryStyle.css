@@ -1,0 +1,180 @@
+.mainContainer {
+    background-color: whitesmoke;
+
+    display: grid;
+    grid-template-rows: 5vh minmax(700px, auto) 5vh;
+    grid-template-columns: 10vh minmax(1000px, auto) 10vh;
+
+}
+
+button {
+    background: transparent;
+    cursor: pointer;
+    transition: 0.5s ease;
+    border: none;
+    opacity: 0.8;
+}
+
+button:hover {
+    opacity: 0.5;
+}
+
+.cardsContainer {
+    grid-row: 2;
+    grid-column: 2;
+    display: flex;
+    padding: 2%;
+    gap: 2%;
+
+    overflow-x: hidden;
+
+    scroll-behavior: smooth;
+    transition: transform 0.3s ease
+}
+
+.existCards {
+    display: flex;
+    gap: 2%;
+}
+
+.diaryCard {
+    flex: 0 0 auto;
+    height: 800px;
+    min-width: 500px;
+
+    border: rgba(128, 128, 128, 0.2) solid 1px;
+    border-radius: 10px;
+
+    transform: translateX(0);
+    transition: transform 0.5s ease;
+
+    display: grid;
+    grid-template-rows: 60px auto;
+}
+
+.cardTitle {
+    grid-row: 1;
+
+    display: grid;
+    grid-template-rows: auto auto;
+
+    border-bottom: rgba(128, 128, 128, 0.2) solid 1px;
+}
+
+.title {
+    grid-row: 1;
+    outline: none;
+    border: none;
+    margin: 3% 10% -12px 3%;
+
+    font-family: 'Montserrat';
+    color: rgba(0, 0, 0, 0.808);
+    font-size: 17px;
+}
+
+.timeCreateCard {
+    grid-row: 2;
+
+    border-top: rgba(128, 128, 128, 0.2) solid 1px;
+    margin-right: 10%;
+    padding-left: 5%;
+
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.56);
+}
+
+.cardBody {
+    grid-row: 2;
+
+    display: grid;
+    grid-template-rows: auto 50px 50px;
+
+    margin-top: 3%;
+    overflow-y: auto;
+}
+
+.cardItemsContainer {
+    grid-row: 1;
+    display: block;
+}
+
+.parentParagraph {
+    display: flex;
+    margin: 2%;
+}
+
+.task {
+    outline: none;
+    border: none;
+    border-bottom: rgba(128, 128, 128, 0.2) solid 1px;
+    width: 90%;
+    padding-left: 2%;
+
+    font-family: 'Montserrat';
+    color: rgba(0, 0, 0, 0.808);
+    font-size: 15px;
+}
+
+.taskStatus {
+    outline: none;
+    border: rgba(128, 128, 128, 0.2) solid 1px !important;
+}
+
+.createNewParagraph {
+    grid-row: 2;
+    align-self: end;
+}
+
+.exist {
+    background-color: white;
+}
+
+.create {
+    display: grid;
+    place-content: center;
+    background-color: transparent;
+}
+
+.cardAction {
+    grid-row: 3;
+    display: flex;
+    border-top: rgba(128, 128, 128, 0.2) solid 1px;
+    padding-left: 20%;
+}
+
+.inactive {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.empty{
+    width: 200px;
+}
+
+.navButton {
+    background: white;
+    color: rgba(0, 0, 0, 0.808);
+    border: rgba(128, 128, 128, 0.2) solid 1px;
+    border-radius: 10px;
+
+    width: 60px;
+    height: 80px;
+    cursor: pointer;
+}
+.navButton.left {
+    left: 10px;
+    grid-row: 2;
+    grid-column: 1;
+    place-self: center;
+}
+
+.navButton.right {
+    right: 10px;
+    grid-row: 2;
+    grid-column: 3;
+    place-self: center;
+}
+
+.navButton.right img{
+    transform: scaleX(-1);
+}
