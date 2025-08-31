@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Профиль</title>
+        <link rel="stylesheet" th:href="@{/style/profileStyle.css}" />
+        <link rel="stylesheet" th:href="@{/style/style.css}" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    </head>
+
+    <body>
+        <div class="container">
+
+<!--            <div th:replace="~{staticElement :: navbar}"></div>-->
+
+            <div th:replace="~{staticElement :: sidebar}"></div>
+
+            <div class="mainContentContainer">
+                <div id="currentUser" th:data-username="${currentUser.username}" style="display: none;"></div>
+                <div id="user" th:data-username="${profile.username}" style="display: none;"></div>
+
+                    <div class="profileCard">
+                        <button th:if="${profile.username == currentUser.username}" onclick="goToActivation()" class="editProfile">
+                            <img src="/img/change.png"></button>
+                        <div id="profileImage" class="profileImage">
+                            <img th:if="${profile.photoPath != null}"
+                            th:src="@{'/uploads/' + ${profile.photoPath}}">
+                            <img th:unless="${profile.photoPath != null}" th:src="@{/img/user.png}">
+                        </div>
+
+                        <div class="about">
+                            <h3 th:text="${profile.lastName} + ' ' + ${profile.firstName}"></h3>
+
+                            <p  th:text="${profile.position}">
+                        </div>
+                    </div>
+
+                    <div class="mainInfo">
+                        <h3>Основная информация</h3>
+                        <div class="staticData">
+                            <p>Имя</p>
+                            <p>Фамилия</p>
+                            <p>Дата рождения</p>
+                            <p>Пол</p>
+                        </div>
+                        
+                        <div class="dynamicData">
+                            <p th:text="${profile.firstName}">
+
+                            <p th:text="${profile.lastName}">
+
+                            <p th:if="${profile.dob != null}"
+                               th:text="${#temporals.format(profile.dob, 'dd.MM.yyyy')}">
+                            <p th:unless="${profile.dob != null}">------</p>
+
+                            <p th:text="${profile.gender != null} ? ${profile.gender} : '------'"></p>
+                        </div>
+                    </div>
+
+                    <div class="workplaceInfo">
+                        <h3>Рабочее место</h3>
+                        <div class="staticData">
+                            <p>Город</p>
+                            <p>Улица</p>
+                            <p>Этаж</p>
+                            <p>Кабинет</p>
+                        </div>
+                        
+                        <div class="dynamicData">
+                            <p th:text="${profile.city}"></p>
+
+                            <p th:text="${!profile.street.isEmpty()} ? ${profile.street} : '------'"></p>
+
+                            <p th:text="${!profile.officeFloor.isEmpty()} ? ${profile.officeFloor} : '------'"></p>
+
+                            <p th:text="${!profile.officeNumber.isEmpty()} ? ${profile.officeNumber} : '------'"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="feedback">
+                        <h3>Связь со мной</h3>
+
+                        <div class="staticData">
+                            <p>Телефон</p>
+                            <p>Почта</p>
+                        </div>
+
+                        <div class="dynamicData">
+                            <p th:text="${!profile.phoneNumber.isEmpty()} ? ${profile.phoneNumber} : '------'"></p>
+
+                            <p th:text="${profile.email}"></p>
+                        </div>
+                            <a class="linkVK" th:if="${!profile.VKid.isEmpty()}" th:href="${profile.VKid}" target="_blank"><img th:src="@{/img/vk.png}"></a>
+
+                            <a class="linkTG" th:if="${!profile.telegramUsername.isEmpty()}" th:href="${profile.telegramUsername}" target="_blank"><img th:src="@{/img/telegram.png}"></a>
+
+                            <a class="linkVK inactive" th:unless="${!profile.VKid.isEmpty()}" target="_blank"><img th:src="@{/img/vk.png}"></a>
+
+                            <a class="linkTG inactive" th:unless="${!profile.telegramUsername.isEmpty()}" target="_blank"><img th:src="@{/img/telegram.png}"></a>
+                    </div>
+            </div>
+        </div>
+
+    <script>
+        const socket = new SockJS('/ws');
+        const stompClient = Stomp.over(socket);
+        const element = document.getElementById('currentUser');
+        const username = element.getAttribute('data-username');
+        const elem = document.getElementById('user');
+        const user = elem.getAttribute('data-username');
+        console.log(username);
+        console.log(user);
+
+        // Подключаемся только если это профиль текущего пользователя
+        if (username === user) {
+            stompClient.connect({}, () => {
+                stompClient.send("/app/register", {}, username);
+
+                stompClient.subscribe('/topic/onlineStatus', (message) => {
+                    const data = JSON.parse(message.body);
+                    if (data.username === username) {
+                        const element = document.getElementById('profileImage');
+                        element.className = data.isOnline ? 'profileImage online' : 'profileImage offline';
+                    }
+                });
+            });
+
+            window.addEventListener('beforeunload', () => {
+                stompClient.send("/app/unregister", {}, username);
+            });
+        } else {
+            // Для чужого профиля просто проверяем онлайн статус
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/user/queue/status', (message) => {
+                    const isOnline = JSON.parse(message.body);
+                    const element = document.getElementById('profileImage');
+                    element.className = isOnline ? 'profileImage online' : 'profileImage offline';
+                });
+                stompClient.send("/app/requestStatus", {},
+                    JSON.stringify( {
+                        requestingUser: username,
+                        requestedUser: user
+                    }));
+            });
+        }
+
+        function goToActivation() {
+            window.location.href = /*[[@{/activation}]]*/ '/activation';
+        }
+    </script>
+    </body>
+</html>

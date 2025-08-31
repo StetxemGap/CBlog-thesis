@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователи</title>
+    <link rel="stylesheet" th:href="@{/style/style.css}">
+    <link rel="stylesheet" th:href="@{/style/allUsersStyle.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="/js/allUsers/wsOperation.js"></script>
+    <script src="/js/allUsers/searchUsers.js"></script>
+    <script src="/js/allUsers/actionHandler.js"></script>
+</head>
+<body>
+<div class="container">
+<!--    <div th:replace="~{staticElement :: navbar}"></div>-->
+    <div th:replace="~{staticElement :: sidebar}"></div>
+
+    <div class="mainContainer">
+        <div class="allUsers">
+            <div id="currentUser" th:data-username="${currentUser.username}" style="display: none;"></div>
+
+            <div class="searchUserWithFilter">
+                <button type="button" id="cancelSearchButton" style="display: none;"><img th:src="@{/img/close.png}" height="30px" width="30px"></button>
+                <button class="startSearch" id="searchButton" type="submit"><img src="/img/search.png" height="32px" width="32px"></button>
+                <input class="searchUser" id="searchInput" type="text">
+                <button class="openFilter" id="openFilter"><img src="/img/filter.png"></button>
+                <button class="openFilter" id="closeFilter" style="display: none;"><img src="/img/filter.png"></button>
+            </div>
+
+            <div class="filterMenu" id="filterMenu" style="display: none;">
+
+                <p class="positionLabel">Должность</p>
+                <select class="filterPosition">
+                    <option>Не выбрано</option>
+                    <option th:each="position : ${positions}" th:text="${position}"></option>
+                </select>
+
+                <p class="genderLabel">Пол</p>
+                <select class="filterGender">
+                    <option>Не выбрано</option>
+                    <option>Мужской</option>
+                    <option>Женский</option>
+                </select>
+
+                <p class="cityLabel">Город</p>
+                <select class="filterCity">
+                    <option>Не выбрано</option>
+                    <option th:each="city : ${cities}" th:text="${city}"></option>
+                </select>
+
+                <div class="isOnline">
+                    <p for="isOnline">В сети</p>
+                    <input id="isOnline" type="checkbox">
+                </div>
+
+                <button class="filterAction applyFilter" type="submit"><img src="/img/ok.png"></button>
+                <button class="filterAction resetFilter" type="submit"><img src="/img/nonFilter.png"></button>
+            </div>
+
+            <div class="usersList" id="usersList">
+                <div class="listItem" th:each="user : ${usersAll}"
+                     th:if="${user.username} != ${currentUser.username} "
+                     th:id="'listItem-' + ${user.username}"
+                     th:data-user-id="${user.username}"
+                     th:data-user-name="${user.firstName + ' ' + user.lastName}"
+                     th:data-search-text="${user.firstName + ' ' + user.lastName + ' ' + user.username}"
+                     th:data-dob="${user.dob}"
+                     th:data-position="${user.position}"
+                     th:data-gender="${user.gender}"
+                     th:data-city="${user.city}">
+                    <p class="userImage">
+                        <img th:if="${user.photoPath != null}"
+                             th:src="@{'/uploads/' + ${user.photoPath}}">
+                        <img th:unless="${user.photoPath != null}" th:src="@{/img/user.png}">
+                    </p>
+                    <p class="userName" th:text="${user.firstName + ' ' + user.lastName}"></p>
+                    <a th:href="@{/profile/{username}(username=${user.username})}" class="userAction seeUserProfile">
+                        <img src="/img/profile.png">
+                    </a>
+                    <button class="userAction sendMessage"
+                            th:attr="data-username=${user.username}"
+                            onclick="startChat(this)"><img src="/img/message.png"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

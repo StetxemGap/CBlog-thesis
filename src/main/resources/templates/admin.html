@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style/style.css}">
+    <link rel="stylesheet" th:href="@{/style/adminStyle.css}">
+    <meta charset="UTF-8">
+    <title>Администратор</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="/js/admin/actionHandler.js"></script>
+    <script src="/js/admin/searchUsers.js"></script>
+    <script src="/js/admin/wsConnect.js"></script>
+</head>
+<body>
+
+<div class="container">
+<!--    <div th:replace="~{staticElement :: navbar}"></div>-->
+    <div th:replace="~{staticElement :: sidebar}"></div>
+
+    <div class="mainContainer">
+        <div id="currentUser" th:data-username="${currentUser.username}" style="display: none;"></div>
+        <div class="adminPanel">
+            <div class="menu">
+                <button class="selectUsers" id="usersButton">Пользователи</button>
+                <button class="selectHR" id="hrButton">Запросы HR</button>
+                <button class="selectPassword" id="passwordButton">Запросы Пароль</button>
+            </div>
+
+            <div class="mainView" id="mainViewUsers" style="display: grid;">
+                <div class="viewHeader">Управление пользователями</div>
+
+                <div class="view Users">
+                    <div class="searchUsers">
+                        <button type="button" id="cancelSearchButton" style="display: none;"><img th:src="@{/img/close.png}" height="22px" width="22px"></button>
+                        <button class="startSearch" id="searchButton" type="submit"><img src="/img/search.png" height="25px" width="25px"></button>
+                        <input class="searchUser" id="searchInput" type="text">
+
+                        <input id="haveActivation" type="checkbox">
+                        <p for="haveActivation">Активированные</p>
+                    </div>
+
+                    <div class="usersList" id="usersList">
+                        <button class="addUserButton" id="addUserButton" title="Добавить пользователя">
+                            <img src="/img/user-add.png">
+                        </button>
+                        <div class="listItem" th:each="user : ${usersAll}"
+                             th:attr="class=${user.admin} ? 'listItem admin' : 'listItem'"
+                             th:if="${user.username} != ${currentUser.username} "
+                             th:id="'listItem-' + ${user.username}"
+                             th:user-id="${user.username}"
+                             th:data-search-text="${user.firstName + ' ' + user.lastName + ' ' + user.username+ ' ' + user.id.toString()}"
+                             th:data-activation="${user.activation}">
+                            <p class="id" th:text="${user.id.toString()}"></p>
+                            <p class="userName" th:text="${user.username}"></p>
+                            <p class="name" th:text="${user.firstName + ' ' + user.lastName}">First Last</p>
+                            <p class="position" th:text="${user.position}">Position</p>
+                            <p class="activation" th:if="${user.activation}" >Активирован</p>
+                            <p class="activation" th:unless="${user.activation}" >Не активирован</p>
+                            <a th:if = "${user.activation}" th:href="@{/profile/{username}(username=${user.username})}" class="userAction seeUserProfile">
+                                <img src="/img/profile.png">
+                            </a>
+
+                            <a th:unless = "${user.activation}" class="userAction seeUserProfile inactive">
+                                <img src="/img/profile.png">
+                            </a>
+                            <button class="userAction deleteUser" th:data-username="${user.username}">
+                                <img src="/img/delete.png">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mainView" id="mainViewHR" style="display: none;">
+                <div class="viewHeader">Запросы от HR</div>
+
+                <div class="view HR" id="viewHR">
+                    <div class="radioButtonsContainer">
+                        <button class="checked" id="createUserRequests">Создание</button>
+                        <button class="unchecked" id="deleteUserRequests">Удаление</button>
+                    </div>
+
+                    <div class="itemsContainer" id="createUserItems" style="display: block;">
+                        <div class="listItem HRRequest" th:each="hrRequest : ${hrRequests}"
+                             th:if="${!hrRequest.isDelete}"
+                             th:id="'listItem-request-' + ${hrRequest.id}">
+                            <p class="id" id="requestId" th:data="${hrRequest.id}" th:text="${hrRequest.id}"></p>
+                            <p class="firstname" id="requestFirstname" th:data="${hrRequest.firstname}" th:text="${hrRequest.firstname}"></p>
+                            <p class="lastname" id="requestLastname" th:data="${hrRequest.lastname}" th:text="${hrRequest.lastname}"></p>
+                            <p class="position" id="requestPosition" th:data="${hrRequest.position}" th:text="${hrRequest.position}"></p>
+                            <p class="hiringDate" id="requestHiringDate" th:data="${hrRequest.hiringDate}" th:text="${hrRequest.hiringDate}"></p>
+
+                            <button class="userAction acceptCreateRequest" id="acceptCreateButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/ok.png" height="28px" width="28px">
+                            </button>
+                            <button class="userAction cancelCreateRequest" id="cancelCreateButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/close.png" height="25px" width="25px">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="itemsContainer" id="deleteUserItems" style="display: none;">
+                        <div class="listItem HRRequest" th:each="hrRequest : ${hrRequests}"
+                             th:if="${hrRequest.isDelete}"
+                             th:id="'listItem-request-' + ${hrRequest.id}">
+                            <p class="id" id="deleteRequestId" th:data="${hrRequest.id}" th:text="${hrRequest.id}"></p>
+                            <p class="firstname" id="deleteRequestFirstname" th:data="${hrRequest.firstname}" th:text="${hrRequest.firstname}"></p>
+                            <p class="lastname" id="deleteRequestLastname" th:data="${hrRequest.lastname}" th:text="${hrRequest.lastname}"></p>
+                            <p class="position" id="deleteRequestPosition" th:data="${hrRequest.position}" th:text="${hrRequest.position}"></p>
+                            <p class="hiringDate" id="deleteRequestHiringDate" th:data="${hrRequest.hiringDate}" th:text="${hrRequest.hiringDate}"></p>
+
+                            <button class="userAction acceptDeleteRequest" id="acceptDeleteButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/ok.png" height="28px" width="28px">
+                            </button>
+                            <button class="userAction cancelDeleteRequest" id="cancelDeleteButton" th:request-id="${hrRequest.id}">
+                                <img src="/img/close.png" height="25px" width="25px">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mainView" id="mainViewPassword" style="display: none;">
+                <div class="viewHeader">Запросы на пароль</div>
+
+                <div class="view Password" id="viewPassword">
+                    <div class="listItem passwords" th:each="passordRequest : ${passwordRequests}"
+                         th:id="'listItem-password-' + ${passordRequest.username} + '-' + ${passordRequest.id.toString()}"
+                         th:email="${passordRequest.email}">
+                        <p class="id" th:text="${passordRequest.id}"></p>
+                        <p class="userName" th:text="${passordRequest.username}"></p>
+                        <p class="email" th:text="${passordRequest.email}"></p>
+
+                        <button class="userAction accept" id="acceptButton" th:request-id="${passordRequest.id}">
+                            <img src="/img/ok.png" height="28px" width="28px">
+                        </button>
+                        <button class="userAction cancel" id="cancelButton" th:data-username="${passordRequest.username}"
+                                th:request-id="${passordRequest.id}">
+                            <img src="/img/close.png" height="25px" width="25px">
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mainView" id="mainViewCreateUser" style="display: none">
+                <div class="viewHeader">Создание пользователя</div>
+
+                <form class="view CreateUser">
+                    <input class="userData Email" id="inputRequestId" type="text" style="display: none;">
+
+                    <p class="label ForUsername">Юзернейм</p>
+                    <input class="userData Username" id="inputUsername" type="text" required>
+
+                    <p class="label ForPassword">Пароль</p>
+                    <input class="userData Password" id="inputPassword" type="text"
+                           required minlength="5"
+                           oninvalid="this.setCustomValidity('Заполните это поле (минимум 5 символов)')"
+                           oninput="this.setCustomValidity('')">
+
+                    <p class="label ForEmail">Почта</p>
+                    <input class="userData Email" id="inputEmail" type="text" required>
+
+                    <p class="label ForFirstname">Имя</p>
+                    <input class="userData Firstname" id="inputFirstname" type="text" required>
+
+                    <p class="label ForLastname">Фамилия</p>
+                    <input class="userData Lastname" id="inputLastname" type="text" required>
+
+                    <p class="label ForPosition">Должность</p>
+                    <input class="userData Position" id="inputPosition" type="text" required>
+
+                    <p class="label ForHiringDate">Дата найма</p>
+                    <input class="userData HiringDate" id="inputHiringDate" type="date" required>
+
+                    <p class="label ForAdminRole">Права администратора</p>
+                    <input class="userData AdminRole" id="inputAdminRole" type="checkbox">
+
+                    <button class="submitNewUser" id="submitNewUser" type="submit">
+                        <img src="/img/ok.png">
+                    </button>
+                </form>
+            </div>
+
+            <div class="mainView" id="mainViewNewPassword" style="display: none">
+                <div class="viewHeader">Новый пароль</div>
+
+                <form class="view CreateNewPassword">
+                    <p class="label ForPassword">Пароль</p>
+                    <input class="userData Password" id="inputNewPassword" type="text"
+                           required minlength="5"
+                           oninvalid="this.setCustomValidity('Заполните это поле (минимум 5 символов)')"
+                           oninput="this.setCustomValidity('')">
+
+                    <button class="submitNewUser" id="submitNewPassword" type="submit">
+                        <img src="/img/ok.png">
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+body {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+}
+.container {
+    display: grid;
+    grid-template-columns: 55% 45%;
+    flex: 1;
+}
+
+.timeDependentImage { 
+    grid-column: 1;
+    grid-row: 1;
+    background-color: blueviolet;
+}
+
+.timeDependentImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.authField { 
+    background-color: white;
+    min-width: 505px;
+
+    grid-column: 2;
+    grid-row: 1;
+    
+    display: grid;
+    grid-template-rows: 2vh 5vh 40vh;
+    grid-row-gap: 5%;
+    align-content: center;
+    justify-content: center;
+
+    font-family: 'Montserrat';
+}
+
+.helloTimeDependentText {
+    background-color: white;
+
+    grid-row: 2;
+    text-align: left;
+    align-self: end;
+
+    color:blueviolet
+}
+
+.authForm {
+    grid-row: 3;
+    text-align: left;
+
+    display: grid;
+    grid-template-columns: 50vh;
+    grid-template-rows: 10vh 10vh 10vh 10vh;
+    grid-row-gap: 2%;
+    align-content: center;
+    justify-content: center;
+}
+
+.authForm h2 {
+    grid-row: 1;
+    text-align: center;
+    font-size: 30px;
+    color: rgba(0, 0, 0, 0.808);
+}
+
+.authForm label {
+    font-size: 17px;
+    color: rgba(0, 0, 0, 0.808);
+}
+
+.authForm input {
+    margin-top: 1vh;
+    border: none;
+    border-bottom: blueviolet solid 2px;
+    opacity: 0.5;
+    height: 30px !important;
+    padding-left: 10px;
+
+    font-family: 'Montserrat';
+    font-size: medium;
+
+    transition: opacity 0.5s ease-in-out;
+}
+
+.authForm input:focus {
+    outline: none;
+    opacity: 1;
+}
+
+.usernameInput {
+    grid-row: 2;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.passwordInput {
+    grid-row: 3;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.confirmButton {
+    margin-top: 5%;
+    grid-row: 4;
+    text-align: center;
+}
+
+.confirmButton button {
+    height: 50px;
+    width: 150px;
+    margin-bottom: 20px;
+
+    font-family: 'Montserrat';
+    font-size: 17px;
+    
+    background-color: transparent;
+    border: none;
+    position: relative;
+}
+
+.confirmButton button::after {
+    content: 'Вход';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: black;
+}
+
+.confirmButton button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    background: blueviolet;
+}
+
+.confirmButton button:hover::before {
+    opacity: 0.6;
+}
+
+.confirmButton button:active::before {
+    opacity: 0.9;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+
+    font-family: 'Montserrat';
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+#recoveryUsername {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat';
+}
+
+#sendRecovery {
+    background-color: blueviolet;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Montserrat';
+    font-size: 15px;
+    margin-bottom: 2%;
+}
+
+#sendRecovery:hover {
+    background-color: blueviolet;
+}
+
+#forgotUsernameLink {
+    font-size: 15px;
+    justify-self: center;
+}
+
+#recoveryEmail {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat';
+}
+
+#sendRecoveryEmail {
+    background-color: blueviolet;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Montserrat';
+    font-size: 15px;
+    margin-bottom: 2%;
+}
+
+#sendRecovery:hover {
+    background-color: blueviolet;
+}
+
+.linkContainer {
+    display: block;
+}

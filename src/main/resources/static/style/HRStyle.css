@@ -1,0 +1,84 @@
+body {
+    background-color: whitesmoke;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat';
+    color: rgba(0, 0, 0, 0.808);
+}
+
+.firstView {
+    display: flex;
+    align-self: center;
+    justify-self: center;
+    gap: 5%;
+}
+
+button {
+    background-color: rgba(138, 43, 226, 0.46);
+    border: rgba(128, 128, 128, 0.2) solid 1px;
+    border-radius: 10px;
+    padding: 5%;
+    cursor: pointer;
+
+    font-family: 'Montserrat';
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.808);
+
+    transition: 0.5s;
+}
+
+.addNewUser {
+    background-color: rgba(138, 43, 226, 0.46);
+}
+
+.deleteUser {
+    background-color: #dcdcdc;
+}
+
+button:hover {
+    opacity: 0.5;
+    transition: 0.1s;
+}
+
+button:active {
+    opacity: 1;
+}
+
+.view {
+    display: flex;
+    flex-direction: column;
+    width: 45vh;
+    min-width: 300px;
+    max-width: 700px;
+}
+
+.submitNewUser {
+    margin-top: 15%;
+}
+
+input {
+    border: black solid 2px;
+    padding-left: 10px;
+    border-radius: 20px;
+    opacity: 0.5;
+
+    font-family: 'Montserrat';
+    font-size: 15px;
+
+    transition: opacity 0.2s ease-in-out;
+}
+
+input:focus {
+    outline: none;
+    opacity: 0.808;
+}
+
+.header {
+    margin-bottom: 15%;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Активация</title>
+    <link rel="stylesheet" th:href="@{/style/activationStyle.css}" />
+    <link rel="stylesheet" th:href="@{/style/style.css}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div th:replace="~{staticElement :: sidebar}"></div>
+
+        <form class="mainContentContainer" th:action="@{/activation}" method="post" enctype="multipart/form-data">
+            <div class="mainInfo">
+                <input type="hidden" name="userId" th:value="${userId}">
+                <h3>Основная информация</h3>
+
+                <div class="staticData">
+                    <p>Имя*</p>
+                    <p>Фамилия*</p>
+                    <p>Должность*</p>
+                    <p>Год рождения</p>
+                    <p>Пол</p>
+                </div>
+
+                <div class="dynamicData">
+                    <input type="text" name="firstname" th:value="${usersInfo.firstname}" required>
+                    <input type="text" name="lastname" th:value="${usersInfo.lastname}" required>
+                    <input type="text" name="position" th:value="${usersInfo.position}" required>
+                    <input type="date" name="dob" th:value="${usersInfo.dob != null} ? ${#temporals.format(usersInfo.dob, 'yyyy-MM-dd')} : ''">
+                    <select name="gender">
+                        <option value="none" th:selected="${usersInfo.gender == 'Не указано'}">Не указано</option>
+                        <option value="male" th:selected="${usersInfo.gender == 'Мужской'}">Мужской</option>
+                        <option value="female" th:selected="${usersInfo.gender == 'Женский'}">Женский</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="placeInfo">
+                <h3>Информация о рабочем месте</h3>
+
+                <div class="staticData">
+                    <p>Город*</p>
+                    <p>Улица</p>
+                    <p>Этаж</p>
+                    <p>Кабинет</p>
+                </div>
+
+                <div class="dynamicData">
+                    <input type="text" name="city" th:value="${usersInfo.city}" required>
+                    <input type="text" name="street" th:value="${usersInfo.street}">
+                    <input type="text" name="officeFloor" th:value="${usersInfo.officeFloor}">
+                    <input type="text" name="officeNumber" th:value="${usersInfo.officeNumber}">
+                </div>
+            </div>
+
+            <div class="contactInfo">
+                <h3>Контактные данные</h3>
+
+                <div class="staticData">
+                    <p>Номер телефона</p>
+                    <p>Почта*</p>
+                    <p>ID ВК</p>
+                    <p>Имя пользователя Телеграм</p>
+                </div>
+
+                <div class="dynamicData">
+                    <input type="tel" name="phoneNumber" th:value="${usersContact.phoneNumber}">
+                    <input type="text" name="email" th:value="${usersContact.email}" required>
+                    <input type="text" name="VKid" th:value="${usersContact.VKid}">
+                    <input type="text" name="TelegramUsername" th:value="${usersContact.telegramUsername}">
+                </div>
+            </div>
+
+            <div class="avatar-upload">
+                <div class="avatar-edit">
+                    <input type="file" id="imageUpload" name="photo" accept="image/*" th:value="${usersInfo.photoPath}"/>
+                    <label for="imageUpload"></label>
+                </div>
+                <div class="avatar-preview">
+                    <div id="imagePreview" th:style="${usersInfo.photoPath != null} ?
+                      'background-image: url(/uploads/' + ${usersInfo.photoPath} + ')' :
+                      'background-image: url(../img/user.png)'"></div>
+                </div>
+            </div>
+            <div class="confirm">
+                <button type="submit"></button>
+            </div>
+        </form>
+    </div>
+<script>
+    // отключение ссылок на другие страницы
+    const navigation = document.querySelectorAll('#navigation .link');
+    navigation.forEach(element => {
+        element.style.display = 'none';
+        element.addEventListener('click',function (e) {
+            e.preventDefault();
+        })
+    });
+
+    document.getElementById("imageUpload").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("imagePreview").style.backgroundImage = "url(" + e.target.result + ")";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+</script>
+</body>
+</html>
